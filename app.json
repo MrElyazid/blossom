@@ -9,8 +9,24 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
+<<<<<<< HEAD
       "backgroundColor": "#ffffff"
     },
+=======
+      "backgroundColor": "#ffffff",
+      "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
+    },
+
+
+    
+>>>>>>> e76a90bab5ccbcd22fcff2c8fbf1852d6b57d07f
     "ios": {
       "supportsTablet": true
     },
