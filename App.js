@@ -2,6 +2,8 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image } from 'react-native';
 
+// 3asoli weld dar bo3aza
+
 export default function App() {
   return (
     <View style={styles.container}>
