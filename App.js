@@ -1,59 +1,11 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
-
-// 3asoli weld dar bo3aza
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Blossom</Text>
-      <Text style={styles.subtitle}>Your Dermatology and Skincare Companion</Text>
-      <Image source={{ uri: 'https://www.example.com/skincare.jpg' }} style={styles.image} />
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f8ff',  // Light blue background
-    alignItems: 'center',        // Center horizontally
-    justifyContent: 'center',    // Center vertically
-    padding: 20,                 // Add padding for better spacing
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ff69b4',            // Hot pink color
-    marginBottom: 20,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#555',               // Darker grey color
-    marginBottom: 20,
-    textAlign: 'center',         // Center the subtitle text
-  },
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,           // Rounded image
-    borderWidth: 3,
-    borderColor: '#ff69b4',      // Hot pink border color
-    marginBottom: 20,            // Bottom margin
-  },
-});
-
-// App.js
-//Hello HH
-import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import BlossomLogo from './assets/image.png';
-import Home from './Home';
+import Home from './Home'
+
 
 const Stack = createStackNavigator();
 
@@ -63,7 +15,7 @@ function WelcomeScreen({ navigation }) {
       <Text style={styles.title}>Blossom AI</Text>
       <Text style={styles.subtitle}>Your Dermatology and Skincare Companion</Text>
       <Image source={BlossomLogo} style={styles.image} />
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Home')}
       >
@@ -74,10 +26,10 @@ function WelcomeScreen({ navigation }) {
   );
 }
 
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={{ headerShown: true }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
@@ -140,3 +92,5 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 });
+
+export default App;
