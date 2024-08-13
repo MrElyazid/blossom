@@ -8,7 +8,8 @@ import { auth } from './firebaseConfig'; // Import auth from firebaseConfig.js
 // Import your pages
 import Home from './pages/home/Home';
 import LoginSignup from './pages/login/LoginSignup';
-
+import Login from './pages/login/Login'
+import Signup from './pages/login/Signup'
 const Stack = createStackNavigator();
 
 const WelcomeScreen = ({ navigation }) => {
@@ -59,7 +60,11 @@ const App = () => {
             <Stack.Screen name="Home" component={Home} />
           </>
         ) : (
+          <> 
           <Stack.Screen name="LoginSignup" component={LoginSignup} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Signup" component={Signup} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

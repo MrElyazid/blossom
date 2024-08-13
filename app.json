@@ -9,23 +9,22 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "plugins": [
+      "backgroundColor": "#ffffff"
+    },
+    "plugins": [
       [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ]
-    ]
-    },
-
-
-    
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.blossomAI.blossom"  
     },
     "android": {
+      "package": "com.blossomAI.blossom",  
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
