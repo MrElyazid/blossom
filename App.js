@@ -3,13 +3,18 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseConfig'; // Import auth from firebaseConfig.js
+import { auth } from './firebaseConfig';
 
 // Import your pages
 import Home from './pages/home/Home';
+import Result from './pages/home/Result';
+import Product from './pages/products/Product';
 import LoginSignup from './pages/login/LoginSignup';
 import Login from './pages/login/Login'
 import Signup from './pages/login/Signup'
+import Profile from './pages/userProfile/Profile';
+import History from './pages/userProfile/History';
+
 const Stack = createStackNavigator();
 
 const WelcomeScreen = ({ navigation }) => {
@@ -53,11 +58,15 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
           <>
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Result" component={Result} />
+            <Stack.Screen name="Product" component={Product} />
+            <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="History" component={History} />
           </>
         ) : (
           <> 
