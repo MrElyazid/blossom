@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 import BlossomLogo from '../../assets/BlossomLogo.png';
 import Navbar from '../../components/Navbar';
+import {
+  Container,
+  Logo,
+  Text,
+  Button,
+  ButtonText,
+  ImageContainer,
+  PreviewImage,
+  Loader,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText
+} from '../../styles/home/HomeStyled';
 
 const Home = () => {
   const [image, setImage] = useState(null);
@@ -15,7 +27,6 @@ const Home = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Reset the state when the screen comes into focus
       setImage(null);
       setIsLoading(false);
     }, [])
@@ -27,7 +38,7 @@ const Home = () => {
     try {
       await FileSystem.moveAsync({
         from: uri,
-        to: newPath
+        to: newPath,
       });
       setImage(newPath);
       Alert.alert('Success', 'Image saved successfully');
@@ -63,10 +74,10 @@ const Home = () => {
   const simulateUploadAndFetchDiagnosis = async (imageUri) => {
     try {
       const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-      
+
       const diseases = ['Psoriasis', 'Eczema', 'Rosacea', 'Acne', 'Vitiligo'];
       const genders = ['Male', 'Female'];
-      
+
       const diagnosisResponse = response.data.slice(0, 3).map((item, index) => ({
         disease: diseases[index],
         probability: (Math.random() * 100).toFixed(2) + '%',
@@ -91,8 +102,7 @@ const Home = () => {
   const diagnose = async () => {
     setIsLoading(true);
     try {
-      // Simulate waiting time
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       const result = await simulateUploadAndFetchDiagnosis(image);
       navigation.navigate('Result', { diagnosis: result });
     } catch (error) {
@@ -103,99 +113,44 @@ const Home = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={BlossomLogo} style={styles.logo} />
-      <Text style={styles.text}>Select an option to continue</Text>
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text style={styles.buttonText}>Upload Image</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={takePhoto}>
-        <Text style={styles.buttonText}>Take Photo</Text>
-      </TouchableOpacity>
+    <Container>
+      <Logo source={BlossomLogo} />
+      <Text>Select an option to continue</Text>
+      <Button onPress={pickImage}>
+        <ButtonText>Upload Image</ButtonText>
+      </Button>
+      <Button onPress={takePhoto}>
+        <ButtonText>Take Photo</ButtonText>
+      </Button>
       {image && (
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: image }} style={styles.previewImage} />
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={diagnose}
-            disabled={isLoading}
-          >
-            <Text style={styles.buttonText}>
-              Start Diagnosis
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <ImageContainer>
+          <PreviewImage source={{ uri: image }} />
+          <Button onPress={diagnose} disabled={isLoading}>
+            <ButtonText>Start Diagnosis</ButtonText>
+          </Button>
+        </ImageContainer>
       )}
-      {isLoading && (
-        <ActivityIndicator size="large" color="#ff69b4" style={styles.loader} />
-      )}
-      <Navbar />
-    </View>
+      {isLoading && <Loader size="large" color="#ff69b4" />}
+      <BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+          <Ionicons name="home-outline" size={24} color="#333" />
+          <BottomBarText>Home</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('Scan')}>
+          <Ionicons name="search-outline" size={24} color="#333" />
+          <BottomBarText>Scan</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('History')}>
+          <Ionicons name="stats-chart-outline" size={24} color="#333" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+          <Ionicons name="person-outline" size={24} color="#333" />
+          <BottomBarText>Profile</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f8ff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: '#ff69b4',
-    marginBottom: 30,
-  },
-  text: {
-    fontSize: 22,
-    color: '#333',
-    marginBottom: 30,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  button: {
-    backgroundColor: '#ff69b4',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  imageContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-    width: '100%',
-  },
-  previewImage: {
-    width: 250,
-    height: 250,
-    marginBottom: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#ff69b4',
-  },
-  loader: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-  },
-});
 
 export default Home;
