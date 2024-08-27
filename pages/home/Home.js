@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Alert } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import BlossomLogo from '../../assets/BlossomLogo.png';
-import Navbar from '../../components/Navbar';
 import {
-  Container,
+  SafeArea,
+  ScrollContainer,
+  ContentContainer,
   Logo,
   Text,
   Button,
@@ -17,18 +19,26 @@ import {
   Loader,
   BottomBar,
   BottomBarItem,
-  BottomBarText
+  BottomBarText,
+  ProgressBar,
+  ProgressBarFill
 } from '../../styles/home/HomeStyled';
 
 const Home = () => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [diagnosisComplete, setDiagnosisComplete] = useState(false);
+  const [diagnosisResult, setDiagnosisResult] = useState(null);
   const navigation = useNavigation();
 
   useFocusEffect(
     React.useCallback(() => {
       setImage(null);
       setIsLoading(false);
+      setProgress(0);
+      setDiagnosisComplete(false);
+      setDiagnosisResult(null);
     }, [])
   );
 
@@ -101,10 +111,15 @@ const Home = () => {
 
   const diagnose = async () => {
     setIsLoading(true);
+    setProgress(0);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      for (let i = 0; i <= 100; i += 10) {
+        setProgress(i);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
       const result = await simulateUploadAndFetchDiagnosis(image);
-      navigation.navigate('Result', { diagnosis: result });
+      setDiagnosisResult(result);
+      setDiagnosisComplete(true);
     } catch (error) {
       Alert.alert('Error', 'Failed to fetch diagnosis');
     } finally {
@@ -112,33 +127,48 @@ const Home = () => {
     }
   };
 
+  const handleDiagnosisButton = () => {
+    if (diagnosisComplete) {
+      navigation.navigate('Result', { diagnosis: diagnosisResult });
+    } else {
+      diagnose();
+    }
+  };
+
   return (
-    <Container>
-      <Logo source={BlossomLogo} />
-      <Text>Select an option to continue</Text>
-      <Button onPress={pickImage}>
-        <ButtonText>Upload Image</ButtonText>
-      </Button>
-      <Button onPress={takePhoto}>
-        <ButtonText>Take Photo</ButtonText>
-      </Button>
-      {image && (
-        <ImageContainer>
-          <PreviewImage source={{ uri: image }} />
-          <Button onPress={diagnose} disabled={isLoading}>
-            <ButtonText>Start Diagnosis</ButtonText>
+    <SafeArea>
+      <ScrollContainer>
+        <ContentContainer>
+          <Logo source={BlossomLogo} />
+          <Text>Select an option to continue</Text>
+          <Button onPress={pickImage}>
+            <ButtonText>Upload Image</ButtonText>
           </Button>
-        </ImageContainer>
-      )}
-      {isLoading && <Loader size="large" color="#ff69b4" />}
+          <Button onPress={takePhoto}>
+            <ButtonText>Take Photo</ButtonText>
+          </Button>
+          {image && (
+            <ImageContainer>
+              <PreviewImage source={{ uri: image }} />
+              <Button onPress={handleDiagnosisButton} disabled={isLoading}>
+                <ButtonText>{diagnosisComplete ? 'See Result' : 'Diagnosis'}</ButtonText>
+              </Button>
+            </ImageContainer>
+          )}
+          {isLoading && (
+            <>
+              <Loader size="large" color="#ff69b4" />
+              <ProgressBar>
+                <ProgressBarFill style={{ width: `${progress}%` }} />
+              </ProgressBar>
+            </>
+          )}
+        </ContentContainer>
+      </ScrollContainer>
       <BottomBar>
         <BottomBarItem onPress={() => navigation.navigate('Home')}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('Scan')}>
-          <Ionicons name="search-outline" size={24} color="#333" />
-          <BottomBarText>Scan</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate('History')}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
@@ -149,7 +179,7 @@ const Home = () => {
           <BottomBarText>Profile</BottomBarText>
         </BottomBarItem>
       </BottomBar>
-    </Container>
+    </SafeArea>
   );
 };
 

@@ -1,11 +1,20 @@
 // styles/home/HomeStyled.js
 import styled from 'styled-components/native';
+import { ScrollView, SafeAreaView } from 'react-native';
 
-export const Container = styled.View`
+export const SafeArea = styled(SafeAreaView)`
   flex: 1;
   background-color: #f0f8ff;
+`;
+
+export const ScrollContainer = styled(ScrollView)`
+  flex: 1;
+`;
+
+export const ContentContainer = styled.View`
+  flex: 1;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 20px;
   padding-bottom: 90px; /* Add padding to accommodate the BottomBar */
 `;
@@ -96,4 +105,18 @@ export const BottomBarText = styled.Text`
   color: #333;
   font-size: 12px;
   margin-top: 5px;
+`;
+
+export const ProgressBar = styled.View`
+  width: 80%;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-top: 10px;
+`;
+
+export const ProgressBarFill = styled.View`
+  height: 100%;
+  background-color: #ff69b4;
 `;

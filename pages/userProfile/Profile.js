@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { auth } from '../../firebaseConfig';
-import Navbar from '../../components/Navbar';
+import {
+  SafeArea,
+  ScrollContainer,
+  ContentContainer,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText,
+} from '../../styles/home/HomeStyled';
 
-const Profile = ({ navigation }) => {
+const Profile = () => {
   const [userEmail, setUserEmail] = useState('');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -27,29 +37,35 @@ const Profile = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Profile</Text>
-        <Text style={styles.email}>User Email: {userEmail}</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Log Out</Text>
-        </TouchableOpacity>
-      </View>
-      <Navbar navigation={navigation} />
-    </View>
+    <SafeArea>
+      <ScrollContainer>
+        <ContentContainer>
+          <Text style={styles.title}>Profile</Text>
+          <Text style={styles.email}>User Email: {userEmail}</Text>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Log Out</Text>
+          </TouchableOpacity>
+        </ContentContainer>
+      </ScrollContainer>
+      <BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+          <Ionicons name="home-outline" size={24} color="#333" />
+          <BottomBarText>Home</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('History')}>
+          <Ionicons name="stats-chart-outline" size={24} color="#333" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+          <Ionicons name="person-outline" size={24} color="#333" />
+          <BottomBarText>Profile</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
+    </SafeArea>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',

@@ -2,7 +2,14 @@ import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import Navbar from '../../components/Navbar';
+import {
+  SafeArea,
+  ScrollContainer,
+  ContentContainer,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText,
+} from '../../styles/home/HomeStyled';
 
 const Result = () => {
   const navigation = useNavigation();
@@ -32,50 +39,54 @@ const Result = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.navigate('Home')}
-      >
-        <Ionicons name="arrow-back" size={24} color="#ff69b4" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Diagnosis Result</Text>
-      <ScrollView style={styles.scrollView}>
-        {renderDiagnosisResult()}
-      </ScrollView>
-      <TouchableOpacity
-        style={styles.consultButton}
-        onPress={() => navigation.navigate('Product')}
-      >
-        <Text style={styles.consultButtonText}>Consult Products</Text>
-      </TouchableOpacity>
-      <Navbar />
-    </View>
+    <SafeArea>
+      <ScrollContainer>
+        <ContentContainer>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.navigate('Home')}
+          >
+            <Ionicons name="arrow-back" size={24} color="#ff69b4" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Diagnosis Result</Text>
+          {renderDiagnosisResult()}
+          <TouchableOpacity
+            style={styles.consultButton}
+            onPress={() => navigation.navigate('Product')}
+          >
+            <Text style={styles.consultButtonText}>Consult Products</Text>
+          </TouchableOpacity>
+        </ContentContainer>
+      </ScrollContainer>
+      <BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+          <Ionicons name="home-outline" size={24} color="#333" />
+          <BottomBarText>Home</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('History')}>
+          <Ionicons name="stats-chart-outline" size={24} color="#333" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+          <Ionicons name="person-outline" size={24} color="#333" />
+          <BottomBarText>Profile</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
+    </SafeArea>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f8ff',
-    padding: 20,
-  },
   backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 1,
+    alignSelf: 'flex-start',
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginTop: 60,
     marginBottom: 20,
     textAlign: 'center',
-  },
-  scrollView: {
-    flex: 1,
   },
   resultItem: {
     backgroundColor: 'white',

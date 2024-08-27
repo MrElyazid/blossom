@@ -1,8 +1,16 @@
 // pages/products/Product.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Navbar from '../../components/Navbar'; // Adjust the import path as needed
+import { Ionicons } from '@expo/vector-icons';
+import {
+  SafeArea,
+  ScrollContainer,
+  ContentContainer,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText,
+} from '../../styles/home/HomeStyled';
 
 const Product = () => {
   const [catImages, setCatImages] = useState([]);
@@ -23,40 +31,49 @@ const Product = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Result')}>
-        <Text style={styles.backButtonText}>← Back</Text>
-      </TouchableOpacity>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        {catImages.map((image, index) => (
-          <Image key={index} source={{ uri: image }} style={styles.catImage} />
-        ))}
-      </ScrollView>
-      <Navbar />
-    </View>
+    <SafeArea>
+      <ScrollContainer>
+        <ContentContainer>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Result')}>
+            <Text style={styles.backButtonText}>← Back</Text>
+          </TouchableOpacity>
+          {catImages.map((image, index) => (
+            <Image key={index} source={{ uri: image }} style={styles.catImage} />
+          ))}
+        </ContentContainer>
+      </ScrollContainer>
+      <BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+          <Ionicons name="home-outline" size={24} color="#333" />
+          <BottomBarText>Home</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('History')}>
+          <Ionicons name="stats-chart-outline" size={24} color="#333" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+          <Ionicons name="person-outline" size={24} color="#333" />
+          <BottomBarText>Profile</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
+    </SafeArea>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
   backButton: {
     marginBottom: 16,
+    alignSelf: 'flex-start',
   },
   backButtonText: {
     fontSize: 18,
     color: '#007BFF',
   },
-  scrollView: {
-    alignItems: 'center',
-  },
   catImage: {
     width: 200,
     height: 200,
     marginBottom: 16,
+    alignSelf: 'center',
   },
 });
 
