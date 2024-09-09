@@ -81,28 +81,23 @@ const Home = () => {
     }
   };
 
-  const simulateUploadAndFetchDiagnosis = async (imageUri) => {
+  const uploadImageAndFetchDiagnosis = async (imageUri) => {
     try {
-      const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+      const formData = new FormData();
+      formData.append('image', {
+        uri: imageUri,
+        type: 'image/jpeg',
+        name: 'image.jpg',
+      });
 
-      const diseases = ['Psoriasis', 'Eczema', 'Rosacea', 'Acne', 'Vitiligo'];
-      const genders = ['Male', 'Female'];
-
-      const diagnosisResponse = response.data.slice(0, 3).map((item, index) => ({
-        disease: diseases[index],
-        probability: (Math.random() * 100).toFixed(2) + '%',
-        description: `This is a brief description for ${diseases[index]}.`,
-        dryness: (Math.random() * 100).toFixed(2) + '%',
-        expected_gender: genders[Math.floor(Math.random() * genders.length)],
-        skin_properties: {
-          hydration_level: (Math.random() * 100).toFixed(2) + '%',
-          oiliness_level: (Math.random() * 100).toFixed(2) + '%',
-          sensitivity_level: (Math.random() * 100).toFixed(2) + '%',
+      const response = await axios.post('http://10.0.2.2:5000/classify', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
-      }));
+      });
 
-      console.log('Diagnosis Response: ', diagnosisResponse);
-      return diagnosisResponse;
+      console.log('Diagnosis Response: ', response.data);
+      return response.data;
     } catch (error) {
       console.log('Error fetching data: ', error);
       throw error;
@@ -117,7 +112,7 @@ const Home = () => {
         setProgress(i);
         await new Promise((resolve) => setTimeout(resolve, 300));
       }
-      const result = await simulateUploadAndFetchDiagnosis(image);
+      const result = await uploadImageAndFetchDiagnosis(image);
       setDiagnosisResult(result);
       setDiagnosisComplete(true);
     } catch (error) {

@@ -18,22 +18,16 @@ const Result = () => {
 
   const renderDiagnosisResult = () => {
     if (!diagnosis || diagnosis.length === 0) {
-      return <Text style={styles.noData}>No diagnosis data available.</Text>;
+      return <Text style={styles.noData}>No detections found.</Text>;
     }
 
-    return diagnosis.map((item, index) => (
+    return diagnosis.map((prediction, index) => (
       <View key={index} style={styles.resultItem}>
-        <Text style={styles.disease}>{item.disease}</Text>
-        <Text style={styles.probability}>Probability: {item.probability}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-        <Text style={styles.dryness}>Dryness: {item.dryness}</Text>
-        <Text style={styles.gender}>Expected Gender: {item.expected_gender}</Text>
-        <View style={styles.skinProperties}>
-          <Text style={styles.skinPropertyTitle}>Skin Properties:</Text>
-          <Text>Hydration: {item.skin_properties.hydration_level}</Text>
-          <Text>Oiliness: {item.skin_properties.oiliness_level}</Text>
-          <Text>Sensitivity: {item.skin_properties.sensitivity_level}</Text>
-        </View>
+        <Text style={styles.class}>Class: {prediction.class}</Text>
+        <Text style={styles.confidence}>Confidence: {(prediction.confidence * 100).toFixed(2)}%</Text>
+        <Text style={styles.coordinates}>
+          Coordinates: ({prediction.x1.toFixed(2)}, {prediction.y1.toFixed(2)}) - ({prediction.x2.toFixed(2)}, {prediction.y2.toFixed(2)})
+        </Text>
       </View>
     ));
   };
@@ -102,41 +96,21 @@ const styles = StyleSheet.create({
     shadowRadius: 2.62,
     elevation: 4,
   },
-  disease: {
+  class: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#ff69b4',
     marginBottom: 5,
   },
-  probability: {
+  confidence: {
     fontSize: 16,
     color: '#333',
     marginBottom: 5,
   },
-  description: {
+  coordinates: {
     fontSize: 14,
     color: '#666',
     marginBottom: 10,
-  },
-  dryness: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 5,
-  },
-  gender: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 10,
-  },
-  skinProperties: {
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    borderRadius: 5,
-  },
-  skinPropertyTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 5,
   },
   noData: {
     fontSize: 16,
