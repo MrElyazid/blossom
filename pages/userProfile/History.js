@@ -1,5 +1,5 @@
+// pages/userProfile/History.js
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -10,6 +10,7 @@ import {
   BottomBarItem,
   BottomBarText,
 } from '../../styles/home/HomeStyled';
+import { Title } from '../../styles/userProfile/HistoryStyled';
 
 const History = () => {
   const navigation = useNavigation();
@@ -18,7 +19,7 @@ const History = () => {
     <SafeArea>
       <ScrollContainer>
         <ContentContainer>
-          <Text style={styles.title}>History</Text>
+          <Title>History</Title>
           <Text>Your scan history will be displayed here.</Text>
         </ContentContainer>
       </ScrollContainer>
@@ -39,13 +40,5 @@ const History = () => {
     </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-});
 
 export default History;

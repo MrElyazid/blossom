@@ -1,7 +1,7 @@
+// pages/home/Result.js
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   SafeArea,
   ScrollContainer,
@@ -10,6 +10,17 @@ import {
   BottomBarItem,
   BottomBarText,
 } from '../../styles/home/HomeStyled';
+import {
+  BackButton,
+  Title,
+  ResultItem,
+  ClassText,
+  ConfidenceText,
+  CoordinatesText,
+  NoDataText,
+  ConsultButton,
+  ConsultButtonText,
+} from '../../styles/home/ResultStyled';
 
 const Result = () => {
   const navigation = useNavigation();
@@ -18,17 +29,18 @@ const Result = () => {
 
   const renderDiagnosisResult = () => {
     if (!diagnosis || diagnosis.length === 0) {
-      return <Text style={styles.noData}>No detections found.</Text>;
+      return <NoDataText>No detections found.</NoDataText>;
     }
 
     return diagnosis.map((prediction, index) => (
-      <View key={index} style={styles.resultItem}>
-        <Text style={styles.class}>Class: {prediction.class}</Text>
-        <Text style={styles.confidence}>Confidence: {(prediction.confidence * 100).toFixed(2)}%</Text>
-        <Text style={styles.coordinates}>
-          Coordinates: ({prediction.x1.toFixed(2)}, {prediction.y1.toFixed(2)}) - ({prediction.x2.toFixed(2)}, {prediction.y2.toFixed(2)})
-        </Text>
-      </View>
+      <ResultItem key={index}>
+        <ClassText>Class: {prediction.class}</ClassText>
+        <ConfidenceText>Confidence: {(prediction.confidence * 100).toFixed(2)}%</ConfidenceText>
+        <CoordinatesText>
+          Coordinates: ({prediction.x1.toFixed(2)}, {prediction.y1.toFixed(2)}) -
+          ({prediction.x2.toFixed(2)}, {prediction.y2.toFixed(2)})
+        </CoordinatesText>
+      </ResultItem>
     ));
   };
 
@@ -36,20 +48,14 @@ const Result = () => {
     <SafeArea>
       <ScrollContainer>
         <ContentContainer>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate('Home')}
-          >
+          <BackButton onPress={() => navigation.navigate('Home')}>
             <Ionicons name="arrow-back" size={24} color="#ff69b4" />
-          </TouchableOpacity>
-          <Text style={styles.title}>Diagnosis Result</Text>
+          </BackButton>
+          <Title>Diagnosis Result</Title>
           {renderDiagnosisResult()}
-          <TouchableOpacity
-            style={styles.consultButton}
-            onPress={() => navigation.navigate('Product')}
-          >
-            <Text style={styles.consultButtonText}>Consult Products</Text>
-          </TouchableOpacity>
+          <ConsultButton onPress={() => navigation.navigate('Product')}>
+            <ConsultButtonText>Consult Products</ConsultButtonText>
+          </ConsultButton>
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
@@ -69,66 +75,5 @@ const Result = () => {
     </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  resultItem: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-  },
-  class: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ff69b4',
-    marginBottom: 5,
-  },
-  confidence: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 5,
-  },
-  coordinates: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 10,
-  },
-  noData: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-  },
-  consultButton: {
-    backgroundColor: '#ff69b4',
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  consultButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
 
 export default Result;

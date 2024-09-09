@@ -1,6 +1,5 @@
 // pages/products/Product.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -11,6 +10,11 @@ import {
   BottomBarItem,
   BottomBarText,
 } from '../../styles/home/HomeStyled';
+import {
+  BackButton,
+  BackButtonText,
+  CatImage
+} from '../../styles/products/ProductStyled';
 
 const Product = () => {
   const [catImages, setCatImages] = useState([]);
@@ -34,11 +38,11 @@ const Product = () => {
     <SafeArea>
       <ScrollContainer>
         <ContentContainer>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Result')}>
-            <Text style={styles.backButtonText}>← Back</Text>
-          </TouchableOpacity>
+          <BackButton onPress={() => navigation.navigate('Result')}>
+            <BackButtonText>← Back</BackButtonText>
+          </BackButton>
           {catImages.map((image, index) => (
-            <Image key={index} source={{ uri: image }} style={styles.catImage} />
+            <CatImage key={index} source={{ uri: image }} />
           ))}
         </ContentContainer>
       </ScrollContainer>
@@ -59,22 +63,5 @@ const Product = () => {
     </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  backButton: {
-    marginBottom: 16,
-    alignSelf: 'flex-start',
-  },
-  backButtonText: {
-    fontSize: 18,
-    color: '#007BFF',
-  },
-  catImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 16,
-    alignSelf: 'center',
-  },
-});
 
 export default Product;
