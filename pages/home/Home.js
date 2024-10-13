@@ -30,6 +30,7 @@ const Home = () => {
   const [progress, setProgress] = useState(0);
   const [diagnosisComplete, setDiagnosisComplete] = useState(false);
   const [diagnosisResult, setDiagnosisResult] = useState(null);
+  const [skinTypeResult, setSkinTypeResult] = useState(null);
   const navigation = useNavigation();
 
   useFocusEffect(
@@ -39,6 +40,7 @@ const Home = () => {
       setProgress(0);
       setDiagnosisComplete(false);
       setDiagnosisResult(null);
+      setSkinTypeResult(null);
     }, [])
   );
 
@@ -90,9 +92,13 @@ const Home = () => {
         name: 'image.jpg',
       });
 
-      const response = await axios.post('http://10.0.2.2:5000/classify', formData, {
+      const response = await axios.post('https://6987-105-71-135-201.ngrok-free.app/classify', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total) / 2;
+          setProgress((prevProgress) => Math.max(prevProgress, percentCompleted));
         },
       });
 
@@ -104,19 +110,48 @@ const Home = () => {
     }
   };
 
+  const fetchSkinTypeAnalysis = async (imageUri) => {
+    try {
+      const base64Image = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
+      
+      const response = await axios({
+        method: "POST",
+        url: "https://detect.roboflow.com/blossom-vhk4n/1",
+        params: {
+          api_key: "5SVhyIFgWpAUZYBY3dIM"
+        },
+        data: base64Image,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total) / 2 + 50;
+          setProgress((prevProgress) => Math.max(prevProgress, percentCompleted));
+        },
+      });
+
+      console.log('Skin Type Analysis Response: ', response.data);
+      return response.data;
+    } catch (error) {
+      console.log('Error fetching skin type data: ', error);
+      throw error;
+    }
+  };
+
   const diagnose = async () => {
     setIsLoading(true);
     setProgress(0);
     try {
-      for (let i = 0; i <= 100; i += 10) {
-        setProgress(i);
-        await new Promise((resolve) => setTimeout(resolve, 300));
-      }
-      const result = await uploadImageAndFetchDiagnosis(image);
-      setDiagnosisResult(result);
+      const [diagnosisResult, skinTypeResult] = await Promise.all([
+        uploadImageAndFetchDiagnosis(image),
+        fetchSkinTypeAnalysis(image)
+      ]);
+      setDiagnosisResult(diagnosisResult);
+      setSkinTypeResult(skinTypeResult);
       setDiagnosisComplete(true);
+      setProgress(100);
     } catch (error) {
-      Alert.alert('Error', 'Failed to fetch diagnosis');
+      Alert.alert('Error', 'Failed to fetch diagnosis or skin type analysis');
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +159,13 @@ const Home = () => {
 
   const handleDiagnosisButton = () => {
     if (diagnosisComplete) {
-      navigation.navigate('Result', { diagnosis: diagnosisResult });
+      console.log('Diagnosis Result before navigation:', diagnosisResult);
+      console.log('Skin Type Result before navigation:', skinTypeResult);
+      navigation.navigate('Result', { 
+        diagnosis: diagnosisResult, 
+        skinType: skinTypeResult, 
+        imageUri: image 
+      });
     } else {
       diagnose();
     }

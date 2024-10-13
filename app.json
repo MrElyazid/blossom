@@ -21,17 +21,25 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.blossomAI.blossom"  
+      "bundleIdentifier": "com.blossomAI.blossom"
     },
     "android": {
-      "package": "com.blossomAI.blossom",  
+      "package": "com.blossomAI.blossom",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a9ef432a-5fd1-4602-bdff-6591b0f2da67"
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
 # blossom, Dermatologist AI companion
 
 A react native app for Dermatology and skin disease diagnosis, uses :
-- Firebase for saving users account and scan hostories
+- Firebase for saving users account and scan histories
 - cat API for simulating getting products recommendations
 - JSONplaceholder for fake scan data generation and simulating a scan
 - styled-components for styling and customizing the pages
