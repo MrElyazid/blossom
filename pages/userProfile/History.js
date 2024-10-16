@@ -1,8 +1,8 @@
 // pages/userProfile/History.js
-import React from 'react';
-import { Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import {
   SafeArea,
   ScrollContainer,
@@ -10,8 +10,8 @@ import {
   BottomBar,
   BottomBarItem,
   BottomBarText,
-} from '../../styles/home/HomeStyled';
-import { Title } from '../../styles/userProfile/HistoryStyled';
+} from "../../styles/home/HomeStyled";
+import { Title } from "../../styles/userProfile/HistoryStyled";
 
 const History = () => {
   const navigation = useNavigation();
@@ -25,15 +25,15 @@ const History = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('History')}>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="person-outline" size={24} color="#333" />
           <BottomBarText>Profile</BottomBarText>
         </BottomBarItem>

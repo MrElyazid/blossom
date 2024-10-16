@@ -1,6 +1,6 @@
 // styles/home/HomeStyled.js
-import styled from 'styled-components/native';
-import { ScrollView, SafeAreaView } from 'react-native';
+import styled from "styled-components/native";
+import { ScrollView, SafeAreaView } from "react-native";
 
 export const SafeArea = styled(SafeAreaView)`
   flex: 1;

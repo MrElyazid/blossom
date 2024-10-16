@@ -1,8 +1,8 @@
 // pages/userProfile/Profile.js
-import React, { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import { auth } from '../../firebaseConfig';
+import React, { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { auth } from "../../firebaseConfig";
 import {
   SafeArea,
   ScrollContainer,
@@ -10,16 +10,16 @@ import {
   BottomBar,
   BottomBarItem,
   BottomBarText,
-} from '../../styles/home/HomeStyled';
+} from "../../styles/home/HomeStyled";
 import {
   Title,
   Email,
   LogoutButton,
   LogoutButtonText,
-} from '../../styles/userProfile/ProfileStyled';
+} from "../../styles/userProfile/ProfileStyled";
 
 const Profile = () => {
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -30,15 +30,16 @@ const Profile = () => {
   }, []);
 
   const handleLogout = () => {
-    auth.signOut()
+    auth
+      .signOut()
       .then(() => {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'App' }],
+          routes: [{ name: "App" }],
         });
       })
       .catch((error) => {
-        console.error('Logout error:', error);
+        console.error("Logout error:", error);
       });
   };
 
@@ -54,15 +55,15 @@ const Profile = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('History')}>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="person-outline" size={24} color="#333" />
           <BottomBarText>Profile</BottomBarText>
         </BottomBarItem>

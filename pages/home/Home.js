@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Alert } from 'react-native';
-import axios from 'axios';
-import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
-import BlossomLogo from '../../assets/BlossomLogo.png';
+import React, { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { Alert } from "react-native";
+import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import BlossomLogo from "../../assets/BlossomLogo.png";
 import {
   SafeArea,
   ScrollContainer,
@@ -21,8 +21,8 @@ import {
   BottomBarItem,
   BottomBarText,
   ProgressBar,
-  ProgressBarFill
-} from '../../styles/home/HomeStyled';
+  ProgressBarFill,
+} from "../../styles/home/HomeStyled";
 
 const Home = () => {
   const [image, setImage] = useState(null);
@@ -45,7 +45,7 @@ const Home = () => {
   );
 
   const saveImage = async (uri) => {
-    const fileName = uri.split('/').pop();
+    const fileName = uri.split("/").pop();
     const newPath = FileSystem.documentDirectory + fileName;
     try {
       await FileSystem.moveAsync({
@@ -53,10 +53,10 @@ const Home = () => {
         to: newPath,
       });
       setImage(newPath);
-      Alert.alert('Success', 'Image saved successfully');
+      Alert.alert("Success", "Image saved successfully");
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', 'Failed to save image');
+      Alert.alert("Error", "Failed to save image");
     }
   };
 
@@ -86,54 +86,68 @@ const Home = () => {
   const uploadImageAndFetchDiagnosis = async (imageUri) => {
     try {
       const formData = new FormData();
-      formData.append('image', {
+      formData.append("image", {
         uri: imageUri,
-        type: 'image/jpeg',
-        name: 'image.jpg',
+        type: "image/jpeg",
+        name: "image.jpg",
       });
 
-      const response = await axios.post('https://6987-105-71-135-201.ngrok-free.app/classify', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total) / 2;
-          setProgress((prevProgress) => Math.max(prevProgress, percentCompleted));
-        },
-      });
+      const response = await axios.post(
+        "https://6987-105-71-135-201.ngrok-free.app/classify",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted =
+              Math.round((progressEvent.loaded * 100) / progressEvent.total) /
+              2;
+            setProgress((prevProgress) =>
+              Math.max(prevProgress, percentCompleted)
+            );
+          },
+        }
+      );
 
-      console.log('Diagnosis Response: ', response.data);
+      console.log("Diagnosis Response: ", response.data);
       return response.data;
     } catch (error) {
-      console.log('Error fetching data: ', error);
+      console.log("Error fetching data: ", error);
       throw error;
     }
   };
 
   const fetchSkinTypeAnalysis = async (imageUri) => {
     try {
-      const base64Image = await FileSystem.readAsStringAsync(imageUri, { encoding: FileSystem.EncodingType.Base64 });
-      
+      const base64Image = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
       const response = await axios({
         method: "POST",
         url: "https://detect.roboflow.com/blossom-vhk4n/1",
         params: {
-          api_key: "5SVhyIFgWpAUZYBY3dIM"
+          api_key: "5SVhyIFgWpAUZYBY3dIM",
         },
         data: base64Image,
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total) / 2 + 50;
-          setProgress((prevProgress) => Math.max(prevProgress, percentCompleted));
+          const percentCompleted =
+            Math.round((progressEvent.loaded * 100) / progressEvent.total) / 2 +
+            50;
+          setProgress((prevProgress) =>
+            Math.max(prevProgress, percentCompleted)
+          );
         },
       });
 
-      console.log('Skin Type Analysis Response: ', response.data);
+      console.log("Skin Type Analysis Response: ", response.data);
       return response.data;
     } catch (error) {
-      console.log('Error fetching skin type data: ', error);
+      console.log("Error fetching skin type data: ", error);
       throw error;
     }
   };
@@ -144,14 +158,14 @@ const Home = () => {
     try {
       const [diagnosisResult, skinTypeResult] = await Promise.all([
         uploadImageAndFetchDiagnosis(image),
-        fetchSkinTypeAnalysis(image)
+        fetchSkinTypeAnalysis(image),
       ]);
       setDiagnosisResult(diagnosisResult);
       setSkinTypeResult(skinTypeResult);
       setDiagnosisComplete(true);
       setProgress(100);
     } catch (error) {
-      Alert.alert('Error', 'Failed to fetch diagnosis or skin type analysis');
+      Alert.alert("Error", "Failed to fetch diagnosis or skin type analysis");
     } finally {
       setIsLoading(false);
     }
@@ -159,12 +173,12 @@ const Home = () => {
 
   const handleDiagnosisButton = () => {
     if (diagnosisComplete) {
-      console.log('Diagnosis Result before navigation:', diagnosisResult);
-      console.log('Skin Type Result before navigation:', skinTypeResult);
-      navigation.navigate('Result', { 
-        diagnosis: diagnosisResult, 
-        skinType: skinTypeResult, 
-        imageUri: image 
+      console.log("Diagnosis Result before navigation:", diagnosisResult);
+      console.log("Skin Type Result before navigation:", skinTypeResult);
+      navigation.navigate("Result", {
+        diagnosis: diagnosisResult,
+        skinType: skinTypeResult,
+        imageUri: image,
       });
     } else {
       diagnose();
@@ -187,7 +201,9 @@ const Home = () => {
             <ImageContainer>
               <PreviewImage source={{ uri: image }} />
               <Button onPress={handleDiagnosisButton} disabled={isLoading}>
-                <ButtonText>{diagnosisComplete ? 'See Result' : 'Diagnosis'}</ButtonText>
+                <ButtonText>
+                  {diagnosisComplete ? "See Result" : "Diagnosis"}
+                </ButtonText>
               </Button>
             </ImageContainer>
           )}
@@ -202,15 +218,15 @@ const Home = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('History')}>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="person-outline" size={24} color="#333" />
           <BottomBarText>Profile</BottomBarText>
         </BottomBarItem>

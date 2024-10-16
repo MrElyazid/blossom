@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebaseConfig";
 
 // Import your pages
-import Home from './pages/home/Home';
-import Result from './pages/home/Result';
-import Product from './pages/products/Product';
-import LoginSignup from './pages/login/LoginSignup';
-import Login from './pages/login/Login'
-import Signup from './pages/login/Signup'
-import Profile from './pages/userProfile/Profile';
-import History from './pages/userProfile/History';
+import Home from "./pages/home/Home";
+import Result from "./pages/home/Result";
+import Product from "./pages/products/Product";
+import LoginSignup from "./pages/login/LoginSignup";
+import Login from "./pages/login/Login";
+import Signup from "./pages/login/Signup";
+import Profile from "./pages/userProfile/Profile";
+import History from "./pages/userProfile/History";
 
 const Stack = createStackNavigator();
 
 const WelcomeScreen = ({ navigation }) => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Image
-        source={require('./assets/BlossomLogo.png')}
+        source={require("./assets/BlossomLogo.png")}
         style={{ width: 150, height: 150, borderRadius: 75 }}
       />
-      <Text style={{ marginTop: 20, fontSize: 18, textAlign: 'center' }}>
+      <Text style={{ marginTop: 20, fontSize: 18, textAlign: "center" }}>
         Your Dermatologist AI companion
       </Text>
       <TouchableOpacity
         style={{
           marginTop: 40,
           padding: 10,
-          backgroundColor: '#007AFF',
+          backgroundColor: "#007AFF",
           borderRadius: 5,
         }}
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => navigation.navigate("Home")}
       >
-        <Text style={{ color: 'white' }}>Launch</Text>
+        <Text style={{ color: "white" }}>Launch</Text>
       </TouchableOpacity>
     </View>
   );
@@ -69,10 +69,10 @@ const App = () => {
             <Stack.Screen name="History" component={History} />
           </>
         ) : (
-          <> 
-          <Stack.Screen name="LoginSignup" component={LoginSignup} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Signup" component={Signup} />
+          <>
+            <Stack.Screen name="LoginSignup" component={LoginSignup} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Signup" component={Signup} />
           </>
         )}
       </Stack.Navigator>

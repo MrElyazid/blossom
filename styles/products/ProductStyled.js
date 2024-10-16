@@ -1,5 +1,5 @@
 // styles/products/ProductStyled.js
-import styled from 'styled-components/native';
+import styled from "styled-components/native";
 
 export const BackButton = styled.TouchableOpacity`
   margin-bottom: 16px;

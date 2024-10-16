@@ -1,7 +1,7 @@
 // pages/products/Product.js
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import {
   SafeArea,
   ScrollContainer,
@@ -9,12 +9,12 @@ import {
   BottomBar,
   BottomBarItem,
   BottomBarText,
-} from '../../styles/home/HomeStyled';
+} from "../../styles/home/HomeStyled";
 import {
   BackButton,
   BackButtonText,
-  CatImage
-} from '../../styles/products/ProductStyled';
+  CatImage,
+} from "../../styles/products/ProductStyled";
 
 const Product = () => {
   const [catImages, setCatImages] = useState([]);
@@ -23,11 +23,13 @@ const Product = () => {
   useEffect(() => {
     const fetchCatImages = async () => {
       try {
-        const response = await fetch('https://api.thecatapi.com/v1/images/search?limit=4');
+        const response = await fetch(
+          "https://api.thecatapi.com/v1/images/search?limit=4"
+        );
         const data = await response.json();
-        setCatImages(data.map(item => item.url));
+        setCatImages(data.map((item) => item.url));
       } catch (error) {
-        console.error('Error fetching cat images: ', error);
+        console.error("Error fetching cat images: ", error);
       }
     };
 
@@ -38,7 +40,7 @@ const Product = () => {
     <SafeArea>
       <ScrollContainer>
         <ContentContainer>
-          <BackButton onPress={() => navigation.navigate('Result')}>
+          <BackButton onPress={() => navigation.navigate("Result")}>
             <BackButtonText>← Back</BackButtonText>
           </BackButton>
           {catImages.map((image, index) => (
@@ -47,15 +49,15 @@ const Product = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-        <BottomBarItem onPress={() => navigation.navigate('Home')}>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('History')}>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate('Profile')}>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <Ionicons name="person-outline" size={24} color="#333" />
           <BottomBarText>Profile</BottomBarText>
         </BottomBarItem>

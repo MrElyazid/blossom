@@ -1,5 +1,5 @@
 // styles/home/ResultStyled.js
-import styled from 'styled-components/native';
+import styled from "styled-components/native";
 
 export const BackButton = styled.TouchableOpacity`
   align-self: flex-start;

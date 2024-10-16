@@ -1,37 +1,37 @@
 // pages/login/Signup.js
-import React, { useState } from 'react';
-import { Alert } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
+import React, { useState } from "react";
+import { Alert } from "react-native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
 import {
   Container,
   Input,
   Button,
   ButtonText,
-  LinkText
-} from '../../styles/login/SignupStyled';
+  LinkText,
+} from "../../styles/login/SignupStyled";
 
 const Signup = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User account created & signed in!');
+      console.log("User account created & signed in!");
       // Navigation will be handled by the auth state listener in App.js
     } catch (error) {
       console.error(error);
-      Alert.alert('Error', error.message);
+      Alert.alert("Error", error.message);
     }
   };
 
@@ -59,7 +59,7 @@ const Signup = ({ navigation }) => {
       <Button onPress={handleSignup}>
         <ButtonText>Sign Up</ButtonText>
       </Button>
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
         <LinkText>Already have an account? Log in</LinkText>
       </TouchableOpacity>
     </Container>
