@@ -12,6 +12,11 @@ export const Email = styled.Text`
   margin-bottom: 20px;
 `;
 
+export const InfoText = styled.Text`
+  font-size: 18px;
+  margin-bottom: 20px;
+`;
+
 export const LogoutButton = styled.TouchableOpacity`
   background-color: #ff6347;
   padding: 10px;

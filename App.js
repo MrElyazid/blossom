@@ -14,6 +14,7 @@ import Login from "./pages/login/Login";
 import Signup from "./pages/login/Signup";
 import Profile from "./pages/userProfile/Profile";
 import History from "./pages/userProfile/History";
+import SavedProducts from "./pages/userProfile/SavedProducts";
 
 const Stack = createStackNavigator();
 
@@ -65,6 +66,7 @@ const App = () => {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Result" component={Result} />
             <Stack.Screen name="Product" component={Product} />
+            <Stack.Screen name="SavedProducts" component={SavedProducts} />
             <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="History" component={History} />
           </>

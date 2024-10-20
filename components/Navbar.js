@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 const Navbar = () => {
   const navigation = useNavigation();
@@ -8,13 +9,16 @@ const Navbar = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.navButtonText}>Home</Text>
+        <Ionicons name="home-outline" size={24} color="#007AFF" />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('SavedProducts')}>
+        <Ionicons name="bookmark-outline" size={24} color="#007AFF" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Profile')}>
-        <Text style={styles.navButtonText}>Profile</Text>
+        <Ionicons name="person-outline" size={24} color="#007AFF" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('History')}>
-        <Text style={styles.navButtonText}>History</Text>
+        <Ionicons name="time-outline" size={24} color="#007AFF" />
       </TouchableOpacity>
     </View>
   );
@@ -29,10 +33,7 @@ const styles = StyleSheet.create({
   },
   navButton: {
     padding: 10,
-  },
-  navButtonText: {
-    fontSize: 16,
-    color: '#007AFF',
+    alignItems: 'center',
   },
 });
 

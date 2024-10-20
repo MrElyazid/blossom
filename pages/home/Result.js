@@ -157,6 +157,10 @@ const Result = () => {
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <Ionicons name="bookmark-outline" size={24} color="#333" />
+          <BottomBarText>Saved</BottomBarText>
+        </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("History")}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
           <BottomBarText>History</BottomBarText>

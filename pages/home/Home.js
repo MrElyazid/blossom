@@ -6,6 +6,8 @@ import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import BlossomLogo from "../../assets/BlossomLogo.png";
+import { db, auth } from "../../firebaseConfig";
+import { doc, setDoc, updateDoc, increment, arrayUnion } from "firebase/firestore";
 import {
   SafeArea,
   ScrollContainer,
@@ -93,7 +95,7 @@ const Home = () => {
       });
 
       const response = await axios.post(
-        "https://529c-105-74-64-74.ngrok-free.app/classify",
+        "https://d3ff-105-71-18-171.ngrok-free.app/classify",
         formData,
         {
           headers: {
@@ -152,6 +154,32 @@ const Home = () => {
     }
   };
 
+  const saveScanData = async (diagnosisResult, skinTypeResult) => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const scanData = {
+        date: new Date().toISOString(),
+        diagnosisResult,
+        skinTypeResult,
+      };
+
+      const userDocRef = doc(db, "users", user.uid);
+      await updateDoc(userDocRef, {
+        scans: arrayUnion(scanData),
+        totalScans: increment(1),
+      });
+
+      console.log("Scan data saved successfully");
+    } catch (error) {
+      console.error("Error saving scan data:", error);
+      Alert.alert("Error", "Failed to save scan data");
+    }
+  };
+
   const diagnose = async () => {
     setIsLoading(true);
     setProgress(0);
@@ -164,6 +192,9 @@ const Home = () => {
       setSkinTypeResult(skinTypeResult);
       setDiagnosisComplete(true);
       setProgress(100);
+
+      // Save scan data to Firestore
+      await saveScanData(diagnosisResult, skinTypeResult);
     } catch (error) {
       Alert.alert("Error", "Failed to fetch diagnosis or skin type analysis");
     } finally {
@@ -221,6 +252,10 @@ const Home = () => {
         <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <Ionicons name="home-outline" size={24} color="#333" />
           <BottomBarText>Home</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <Ionicons name="bookmark-outline" size={24} color="#333" />
+          <BottomBarText>Saved</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("History")}>
           <Ionicons name="stats-chart-outline" size={24} color="#333" />
