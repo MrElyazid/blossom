@@ -143,7 +143,11 @@ const Result = () => {
           {renderDiagnosisResult()}
           <Title>Skin Type Analysis</Title>
           {renderSkinTypeResult()}
-          <ConsultButton onPress={() => navigation.navigate("Product")}>
+          <ConsultButton
+            onPress={() =>
+              navigation.navigate("Product", { diagnosis, skinType })
+            }
+          >
             <ConsultButtonText>Consult Products</ConsultButtonText>
           </ConsultButton>
         </ContentContainer>

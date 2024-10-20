@@ -1,19 +1,35 @@
-// styles/products/ProductStyled.js
-import styled from "styled-components/native";
+import styled from 'styled-components/native';
 
 export const BackButton = styled.TouchableOpacity`
-  margin-bottom: 16px;
-  align-self: flex-start;
+  margin-bottom: 20px;
 `;
 
 export const BackButtonText = styled.Text`
   font-size: 18px;
-  color: #007bff;
+  color: #ff69b4;
 `;
 
-export const CatImage = styled.Image`
-  width: 200px;
-  height: 200px;
-  margin-bottom: 16px;
-  align-self: center;
+export const ProductCard = styled.View`
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  elevation: 3;
+`;
+
+export const ProductName = styled.Text`
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+`;
+
+export const ProductInfo = styled.Text`
+  font-size: 14px;
+  margin-bottom: 5px;
+`;
+
+export const ProductLink = styled.Text`
+  color: #ff69b4;
+  font-size: 16px;
+  margin-top: 10px;
 `;
