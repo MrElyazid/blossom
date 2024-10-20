@@ -1,109 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Linking, Alert } from "react-native";
+import { View, Text, Linking, Alert, ActivityIndicator } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import * as SQLite from 'expo-sqlite';
-import * as FileSystem from 'expo-file-system';
-import {
-  SafeArea,
-  ScrollContainer,
-  ContentContainer,
-  BottomBar,
-  BottomBarItem,
-  BottomBarText,
-} from "../../styles/home/HomeStyled";
-import {
-  BackButton,
-  BackButtonText,
-  ProductCard,
-  ProductName,
-  ProductInfo,
-  ProductLink,
-} from "../../styles/products/ProductStyled";
+import { db } from "../../firebaseConfig";
+import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import { SafeArea, ScrollContainer, ContentContainer, BottomBar, BottomBarItem, BottomBarText } from "../../styles/home/HomeStyled";
+import { BackButton, BackButtonText, ProductCard, ProductName, ProductInfo, ProductLink } from "../../styles/products/ProductStyled";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const route = useRoute();
   const { diagnosis, skinType } = route.params || {};
 
   useEffect(() => {
-    const openDatabaseAndFetchProducts = async () => {
+    const fetchProducts = async () => {
       try {
+        setLoading(true);
         console.log("useEffect triggered");
 
-        const dbName = 'products_database.db';
-        const dbPath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+        let skinCondition = diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(' ', '_') || '';
+        let skinTypeClass = skinType?.top?.toLowerCase().replace('-', '_') || '';
 
-        // Check if database exists, if not, copy it from the bundle
-        const dbExists = await FileSystem.getInfoAsync(dbPath);
-        if (!dbExists.exists) {
-          await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, { intermediates: true });
-          await FileSystem.downloadAsync(
-            Asset.fromModule(require('../../products_database.db')).uri,
-            dbPath
-          );
-        }
+        console.log("Skin Condition:", skinCondition);
+        console.log("Skin Type Class:", skinTypeClass);
 
-        if (SQLite.openDatabaseAsync) {
-          console.log("SQLite.openDatabase is available");
-          const db = SQLite.openDatabaseAsync(dbName);
-          console.log("Database opened: ", db);
-          await fetchRelevantProducts(db);
-        } else {
-          console.error("SQLite.openDatabase is not defined");
-          Alert.alert("Error", "SQLite is not available on this device.");
-        }
+        const productsRef = collection(db, "products");
+        const q = query(
+          productsRef,
+          where(skinCondition, ">", 0),
+          orderBy(skinCondition, "desc"),
+          orderBy(skinTypeClass, "desc"),
+          limit(3)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const fetchedProducts = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+          compatibility_score: doc.data()[skinCondition] + doc.data()[skinTypeClass]
+        }));
+
+        console.log("Fetched Products:", fetchedProducts);
+        setProducts(fetchedProducts);
       } catch (error) {
-        console.error("Error in useEffect: ", error);
-        Alert.alert("Error", "An unexpected error occurred.");
+        console.error("Error fetching products:", error);
+        Alert.alert("Error", "Failed to fetch products. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    openDatabaseAndFetchProducts();
+    fetchProducts();
   }, [diagnosis, skinType]);
-
-  const fetchRelevantProducts = async (db) => {
-    try {
-      console.log("Fetching relevant products...");
-  
-      let skinCondition = diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(' ', '_') || '';
-      let skinTypeClass = skinType?.top?.toLowerCase().replace('-', '_') || '';
-  
-      console.log("Skin Condition: ", skinCondition);
-      console.log("Skin Type Class: ", skinTypeClass);
-  
-      const query = `
-        SELECT *, 
-          (${skinCondition} + ${skinTypeClass}) as compatibility_score
-        FROM products
-        WHERE ${skinCondition} > 0 OR ${skinTypeClass} > 0
-        ORDER BY compatibility_score DESC
-        LIMIT 3
-      `;
-  
-      console.log("SQL Query: ", query);
-  
-      db.transaction(tx => {
-        tx.executeSql(
-          query,
-          [],
-          (_, { rows: { _array } }) => {
-            console.log("Query Results: ", _array);
-            setProducts(_array);
-          },
-          (_, error) => {
-            console.error("Error executing query: ", error);
-            Alert.alert("Error", "Failed to fetch products from the database.");
-          }
-        );
-      });
-    } catch (error) {
-      console.error("Error fetching products: ", error);
-      Alert.alert("Error", "Failed to fetch products from the database.");
-    }
-  };
-  
 
   const renderProduct = (product) => (
     <ProductCard key={product.id}>
@@ -125,7 +75,9 @@ const Product = () => {
             <BackButtonText>← Back</BackButtonText>
           </BackButton>
           <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Recommended Products</Text>
-          {products.length > 0 ? (
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : products.length > 0 ? (
             products.map(renderProduct)
           ) : (
             <Text>No products found. Please try again.</Text>
