@@ -7,7 +7,13 @@ import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import BlossomLogo from "../../assets/BlossomLogo.png";
 import { db, auth } from "../../firebaseConfig";
-import { doc, setDoc, updateDoc, increment, arrayUnion } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  increment,
+  arrayUnion,
+} from "firebase/firestore";
 import {
   SafeArea,
   ScrollContainer,
@@ -25,6 +31,7 @@ import {
   ProgressBar,
   ProgressBarFill,
 } from "../../styles/home/HomeStyled";
+import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 
 const Home = () => {
   const [image, setImage] = useState(null);
@@ -65,7 +72,7 @@ const Home = () => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
     });
@@ -77,7 +84,7 @@ const Home = () => {
   const takePhoto = async () => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
     if (!result.canceled) {
@@ -95,7 +102,7 @@ const Home = () => {
       });
 
       const response = await axios.post(
-        "https://d3ff-105-71-18-171.ngrok-free.app/classify",
+        "https://685e-105-71-18-201.ngrok-free.app/classify",
         formData,
         {
           headers: {

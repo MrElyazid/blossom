@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { Text, FlatList, TouchableOpacity, Alert, Linking, View } from 'react-native';
+import React, { useState } from "react";
+import {
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  Linking,
+  View,
+} from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../../firebaseConfig";
@@ -45,9 +52,9 @@ const SavedProducts = () => {
       try {
         const userDocRef = doc(db, "users", user.uid);
         await updateDoc(userDocRef, {
-          savedProducts: arrayRemove(product)
+          savedProducts: arrayRemove(product),
         });
-        setSavedProducts(savedProducts.filter(p => p.id !== product.id));
+        setSavedProducts(savedProducts.filter((p) => p.id !== product.id));
         Alert.alert("Success", "Product removed from saved list.");
       } catch (error) {
         console.error("Error removing product:", error);
@@ -61,20 +68,22 @@ const SavedProducts = () => {
       <ProductName>{item.name}</ProductName>
       <ProductInfo>Price: {item.price}</ProductInfo>
       <ProductInfo>Composition: {item.composition}</ProductInfo>
-      <ProductInfo>Compatibility Score: {item.compatibility_score.toFixed(2)}</ProductInfo>
+      <ProductInfo>
+        Compatibility Score: {item.compatibility_score.toFixed(2)}
+      </ProductInfo>
       <ProductLink onPress={() => Linking.openURL(item.link)}>
         View Product
       </ProductLink>
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={() => removeProduct(item)}
-        style={{ 
-          backgroundColor: '#FF3B30',
+        style={{
+          backgroundColor: "#FF3B30",
           padding: 10,
           borderRadius: 5,
-          marginTop: 10
+          marginTop: 10,
         }}
       >
-        <Text style={{ color: 'white', textAlign: 'center' }}>Remove</Text>
+        <Text style={{ color: "white", textAlign: "center" }}>Remove</Text>
       </TouchableOpacity>
     </ProductCard>
   );
@@ -82,7 +91,9 @@ const SavedProducts = () => {
   return (
     <SafeArea>
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 20 }}>Saved Products</Text>
+        <Text style={{ fontSize: 24, fontWeight: "bold", margin: 20 }}>
+          Saved Products
+        </Text>
         {savedProducts.length > 0 ? (
           <FlatList
             data={savedProducts}
@@ -91,7 +102,9 @@ const SavedProducts = () => {
             contentContainerStyle={{ paddingHorizontal: 20 }}
           />
         ) : (
-          <Text style={{ margin: 20 }}>You haven't saved any products yet.</Text>
+          <Text style={{ margin: 20 }}>
+            You haven't saved any products yet.
+          </Text>
         )}
       </View>
       <BottomBar>

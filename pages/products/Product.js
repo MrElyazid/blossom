@@ -1,11 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Linking, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Linking,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { db, auth } from "../../firebaseConfig";
-import { collection, query, where, orderBy, limit, getDocs, doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
-import { SafeArea, ScrollContainer, ContentContainer, BottomBar, BottomBarItem, BottomBarText } from "../../styles/home/HomeStyled";
-import { BackButton, BackButtonText, ProductCard, ProductName, ProductInfo, ProductLink } from "../../styles/products/ProductStyled";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDoc,
+} from "firebase/firestore";
+import {
+  SafeArea,
+  ScrollContainer,
+  ContentContainer,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText,
+} from "../../styles/home/HomeStyled";
+import {
+  BackButton,
+  BackButtonText,
+  ProductCard,
+  ProductName,
+  ProductInfo,
+  ProductLink,
+} from "../../styles/products/ProductStyled";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
@@ -21,8 +53,11 @@ const Product = () => {
         setLoading(true);
         console.log("useEffect triggered");
 
-        let skinCondition = diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(' ', '_') || '';
-        let skinTypeClass = skinType?.top?.toLowerCase().replace('-', '_') || '';
+        let skinCondition =
+          diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") ||
+          "";
+        let skinTypeClass =
+          skinType?.top?.toLowerCase().replace("-", "_") || "";
 
         console.log("Skin Condition:", skinCondition);
         console.log("Skin Type Class:", skinTypeClass);
@@ -37,10 +72,11 @@ const Product = () => {
         );
 
         const querySnapshot = await getDocs(q);
-        const fetchedProducts = querySnapshot.docs.map(doc => ({
+        const fetchedProducts = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-          compatibility_score: doc.data()[skinCondition] + doc.data()[skinTypeClass]
+          compatibility_score:
+            doc.data()[skinCondition] + doc.data()[skinTypeClass],
         }));
 
         console.log("Fetched Products:", fetchedProducts);
@@ -58,7 +94,10 @@ const Product = () => {
         }
       } catch (error) {
         console.error("Error fetching products:", error);
-        Alert.alert("Error", "Failed to fetch products. Please try again later.");
+        Alert.alert(
+          "Error",
+          "Failed to fetch products. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
@@ -77,7 +116,7 @@ const Product = () => {
     try {
       const userDocRef = doc(db, "users", user.uid);
       await updateDoc(userDocRef, {
-        savedProducts: arrayUnion(product)
+        savedProducts: arrayUnion(product),
       });
       setSavedProducts([...savedProducts, product.id]);
       Alert.alert("Success", "Product saved successfully!");
@@ -92,22 +131,26 @@ const Product = () => {
       <ProductName>{product.name}</ProductName>
       <ProductInfo>Price: {product.price}</ProductInfo>
       <ProductInfo>Composition: {product.composition}</ProductInfo>
-      <ProductInfo>Compatibility Score: {product.compatibility_score.toFixed(2)}</ProductInfo>
+      <ProductInfo>
+        Compatibility Score: {product.compatibility_score.toFixed(2)}
+      </ProductInfo>
       <ProductLink onPress={() => Linking.openURL(product.link)}>
         View Product
       </ProductLink>
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={() => saveProduct(product)}
-        style={{ 
-          backgroundColor: savedProducts.includes(product.id) ? '#ccc' : '#007AFF',
+        style={{
+          backgroundColor: savedProducts.includes(product.id)
+            ? "#ccc"
+            : "#007AFF",
           padding: 10,
           borderRadius: 5,
-          marginTop: 10
+          marginTop: 10,
         }}
         disabled={savedProducts.includes(product.id)}
       >
-        <Text style={{ color: 'white', textAlign: 'center' }}>
-          {savedProducts.includes(product.id) ? 'Saved' : 'Save Product'}
+        <Text style={{ color: "white", textAlign: "center" }}>
+          {savedProducts.includes(product.id) ? "Saved" : "Save Product"}
         </Text>
       </TouchableOpacity>
     </ProductCard>
@@ -120,7 +163,9 @@ const Product = () => {
           <BackButton onPress={() => navigation.navigate("Result")}>
             <BackButtonText>← Back</BackButtonText>
           </BackButton>
-          <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Recommended Products</Text>
+          <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
+            Recommended Products
+          </Text>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : products.length > 0 ? (

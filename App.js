@@ -5,7 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
-// Import your pages
+// pages
 import Home from "./pages/home/Home";
 import Result from "./pages/home/Result";
 import Product from "./pages/products/Product";

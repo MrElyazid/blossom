@@ -34,8 +34,17 @@ const History = () => {
   }, []);
 
   const renderScanItem = ({ item }) => (
-    <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#ccc', paddingBottom: 10 }}>
-      <Text style={{ fontWeight: 'bold' }}>Date: {new Date(item.date).toLocaleString()}</Text>
+    <View
+      style={{
+        marginBottom: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+        paddingBottom: 10,
+      }}
+    >
+      <Text style={{ fontWeight: "bold" }}>
+        Date: {new Date(item.date).toLocaleString()}
+      </Text>
       <Text>Diagnosis: {item.diagnosisResult.predictions[0].class}</Text>
       <Text>Skin Type: {item.skinTypeResult.top}</Text>
     </View>
@@ -47,7 +56,9 @@ const History = () => {
         <Title>Scan History</Title>
         {scanHistory.length > 0 ? (
           <FlatList
-            data={scanHistory.sort((a, b) => new Date(b.date) - new Date(a.date))}
+            data={scanHistory.sort(
+              (a, b) => new Date(b.date) - new Date(a.date)
+            )}
             renderItem={renderScanItem}
             keyExtractor={(item, index) => index.toString()}
           />
