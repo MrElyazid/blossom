@@ -1,6 +1,6 @@
 // pages/login/Signup.js
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, TouchableOpacity } from "react-native"; // Added TouchableOpacity import
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import {
@@ -63,7 +63,7 @@ const Signup = ({ navigation }) => {
         <LinkText>Already have an account? Log in</LinkText>
       </TouchableOpacity>
     </Container>
-  );
+);
 };
 
 export default Signup;
