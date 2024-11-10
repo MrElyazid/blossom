@@ -1,6 +1,5 @@
-// pages/userProfile/History.js
 import React, { useState, useEffect } from "react";
-import { Text, FlatList, View } from "react-native";
+import { Text, FlatList, View, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../../firebaseConfig";
@@ -45,8 +44,19 @@ const History = () => {
       <Text style={{ fontWeight: "bold" }}>
         Date: {new Date(item.date).toLocaleString()}
       </Text>
-      <Text>Diagnosis: {item.diagnosisResult.predictions[0].class}</Text>
-      <Text>Skin Type: {item.skinTypeResult.top}</Text>
+      <Text>
+        Diagnosis: {item.diagnosisResult && item.diagnosisResult.predictions && item.diagnosisResult.predictions.length > 0 ? item.diagnosisResult.predictions[0].class : "N/A"}
+      </Text>
+      <Text>Skin Type: {item.skinTypeResult ? item.skinTypeResult.top : "N/A"}</Text>
+      {item.imageUrl ? (
+        <Image
+          source={{ uri: item.imageUrl }}
+          style={{ width: 100, height: 100, marginTop: 10 }}
+          resizeMode="cover"
+        />
+      ) : (
+        <Text style={{ marginTop: 10 }}>Not available for image</Text>
+      )}
     </View>
   );
 

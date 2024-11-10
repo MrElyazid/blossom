@@ -92,6 +92,36 @@ const Home = () => {
     }
   };
 
+  const uploadImageToCloudinary = async (imageUri) => {
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    const timestamp = Date.now();
+    const imageName = `${user.uid}/${timestamp}`;
+
+    const formData = new FormData();
+    formData.append("file", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: imageName,
+    });
+    formData.append("upload_preset", "vst5cxe3"); // Replace with your upload preset
+
+    const response = await axios.post(
+      `https://api.cloudinary.com/v1_1/dqwffwydx/image/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data.secure_url; // Return the URL of the uploaded image
+  };
+
   const uploadImageAndFetchDiagnosis = async (imageUri) => {
     try {
       const formData = new FormData();
@@ -102,7 +132,7 @@ const Home = () => {
       });
 
       const response = await axios.post(
-        "https://685e-105-71-18-201.ngrok-free.app/classify",
+        "https://bcff-105-71-18-201.ngrok-free.app/classify",
         formData,
         {
           headers: {
@@ -168,10 +198,13 @@ const Home = () => {
         throw new Error("User not authenticated");
       }
 
+      const imageUrl = await uploadImageToCloudinary(image); // Upload image and get URL
+
       const scanData = {
         date: new Date().toISOString(),
         diagnosisResult,
         skinTypeResult,
+        imageUrl, // Include the image URL in the scan data
       };
 
       const userDocRef = doc(db, "users", user.uid);
@@ -223,6 +256,10 @@ const Home = () => {
     }
   };
 
+  const handleChatbotButton = () => {
+    navigation.navigate("Chatbot"); // Navigate to the Chatbot page
+  };
+
   return (
     <SafeArea>
       <ScrollContainer>
@@ -234,6 +271,9 @@ const Home = () => {
           </Button>
           <Button onPress={takePhoto}>
             <ButtonText>Take Photo</ButtonText>
+          </Button>
+          <Button onPress={handleChatbotButton}>
+            <ButtonText>Chat with Bot</ButtonText>
           </Button>
           {image && (
             <ImageContainer>

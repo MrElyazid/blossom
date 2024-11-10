@@ -8,6 +8,7 @@ import { auth } from "./firebaseConfig";
 // pages
 import Home from "./pages/home/Home";
 import Result from "./pages/home/Result";
+import Chatbot from "./pages/home/Chatbot"; // Import the Chatbot page
 import Product from "./pages/products/Product";
 import LoginSignup from "./pages/login/LoginSignup";
 import Login from "./pages/login/Login";
@@ -65,6 +66,7 @@ const App = () => {
             <Stack.Screen name="Welcome" component={WelcomeScreen} />
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Result" component={Result} />
+            <Stack.Screen name="Chatbot" component={Chatbot} />
             <Stack.Screen name="Product" component={Product} />
             <Stack.Screen name="SavedProducts" component={SavedProducts} />
             <Stack.Screen name="Profile" component={Profile} />
