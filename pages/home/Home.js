@@ -13,6 +13,7 @@ import {
   updateDoc,
   increment,
   arrayUnion,
+  getDoc,
 } from "firebase/firestore";
 import {
   SafeArea,
@@ -198,20 +199,36 @@ const Home = () => {
         throw new Error("User not authenticated");
       }
 
-      const imageUrl = await uploadImageToCloudinary(image); // Upload image and get URL
+      const imageUrl = await uploadImageToCloudinary(image);
 
       const scanData = {
         date: new Date().toISOString(),
         diagnosisResult,
         skinTypeResult,
-        imageUrl, // Include the image URL in the scan data
+        imageUrl,
       };
 
       const userDocRef = doc(db, "users", user.uid);
-      await updateDoc(userDocRef, {
-        scans: arrayUnion(scanData),
-        totalScans: increment(1),
-      });
+      
+      // Check if the user document exists
+      const userDoc = await getDoc(userDocRef);
+      
+      if (!userDoc.exists()) {
+        // If document doesn't exist, create it with initial data
+        await setDoc(userDocRef, {
+          scans: [scanData],
+          totalScans: 1,
+          createdAt: new Date().toISOString(),
+          userId: user.uid,
+          email: user.email
+        });
+      } else {
+        // If document exists, update it
+        await updateDoc(userDocRef, {
+          scans: arrayUnion(scanData),
+          totalScans: increment(1),
+        });
+      }
 
       console.log("Scan data saved successfully");
     } catch (error) {
