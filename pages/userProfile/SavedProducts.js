@@ -71,9 +71,17 @@ const SavedProducts = () => {
       <ProductInfo>
         Compatibility Score: {item.compatibility_score.toFixed(2)}
       </ProductInfo>
-      <ProductLink onPress={() => Linking.openURL(item.link)}>
-        View Product
-      </ProductLink>
+      <TouchableOpacity
+        onPress={() => Linking.openURL(item.link)}
+        style={{
+          backgroundColor: "green",
+          padding: 10,
+          borderRadius: 5,
+          marginTop: 10,
+        }}
+      >
+        <Text style={{ color: "white", textAlign: "center" }}>View Product</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={() => removeProduct(item)}
         style={{
@@ -91,7 +99,7 @@ const SavedProducts = () => {
   return (
     <SafeArea>
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", margin: 20 }}>
+        <Text style={{ fontSize: 24, fontWeight: "bold", margin: 20, textAlign: 'center' }}>
           Saved Products
         </Text>
         {savedProducts.length > 0 ? (
