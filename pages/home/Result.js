@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, Dimensions, Text, StyleSheet } from "react-native";
-import Svg, { Rect, Text as SvgText } from "react-native-svg";
+import { View, Image, Dimensions } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Svg, { Rect } from "react-native-svg";
 import {
   SafeArea,
   ScrollContainer,
@@ -12,20 +14,20 @@ import {
 import {
   BackButton,
   Title,
+  ResultItem,
+  ClassText,
+  ConfidenceText,
+  CoordinatesText,
+  NoDataText,
   ConsultButton,
   ConsultButtonText,
 } from "../../styles/home/ResultStyled";
-import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, useRoute } from "@react-navigation/native";
 
 const Result = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { diagnosis, skinType, imageUri } = route.params || {};
-  const [imageDimensions, setImageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
+  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     if (imageUri) {
@@ -40,55 +42,61 @@ const Result = () => {
     }
   }, [imageUri]);
 
-  const skinIssues = [
-    { label: "Acne", x1: 0.25, y1: 0.4, x2: 0.4, y2: 0.5, color: "red", confidence: "85%", coordinates: "(68.5, 279.04) - (160.37, 347.10)" },
-    { label: "Blackheads", x1: 0.55, y1: 0.4, x2: 0.6, y2: 0.5, color: "black", confidence: "90%", coordinates: "(150.9, 280.97) - (348.56, 346.22)" },
-    // Add more items as needed
-  ];
+  const renderDiagnosisResult = () => {
+    if (!diagnosis || !diagnosis.predictions || diagnosis.predictions.length === 0) {
+      return <NoDataText>No detections found.</NoDataText>;
+    }
 
-  const renderSkinIssuesOnImage = () => {
-    return skinIssues.map((issue, index) => {
-      const boxX = issue.x1 * imageDimensions.width;
-      const boxY = issue.y1 * imageDimensions.height;
-      const boxWidth = (issue.x2 - issue.x1) * imageDimensions.width;
-      const boxHeight = (issue.y2 - issue.y1) * imageDimensions.height;
+    return diagnosis.predictions.map((prediction, index) => (
+      <ResultItem key={index}>
+        <ClassText>Class: {prediction.class}</ClassText>
+        <ConfidenceText>Confidence: {(prediction.confidence * 100).toFixed(2)}%</ConfidenceText>
+        <CoordinatesText>
+          Coordinates: ({(prediction.x1 * 100).toFixed(2)}%, {(prediction.y1 * 100).toFixed(2)}%) 
+          - ({(prediction.x2 * 100).toFixed(2)}%, {(prediction.y2 * 100).toFixed(2)}%)
+        </CoordinatesText>
+      </ResultItem>
+    ));
+  };
+
+  const renderSkinTypeResult = () => {
+    if (!skinType || !skinType.top) {
+      return <NoDataText>Skin type analysis not available.</NoDataText>;
+    }
+
+    return (
+      <ResultItem>
+        <ClassText>Skin Type: {skinType.top}</ClassText>
+        <ConfidenceText>Confidence: {(skinType.confidence * 100).toFixed(2)}%</ConfidenceText>
+      </ResultItem>
+    );
+  };
+
+  const renderBoundingBoxes = () => {
+    if (!diagnosis || !diagnosis.predictions) return null;
+
+    return diagnosis.predictions.map((prediction, index) => {
+      const { x1, y1, x2, y2 } = prediction;
+
+      const boxX = x1 * imageDimensions.width;
+      const boxY = y1 * imageDimensions.height;
+      const boxWidth = (x2 - x1) * imageDimensions.width;
+      const boxHeight = (y2 - y1) * imageDimensions.height;
 
       return (
-        <React.Fragment key={index}>
-          <Rect
-            x={boxX}
-            y={boxY}
-            width={boxWidth}
-            height={boxHeight}
-            strokeWidth="2"
-            stroke={issue.color}
-            fill={issue.color + "33"} // Semi-transparent fill
-          />
-          <SvgText
-            x={boxX}
-            y={boxY > 10 ? boxY - 5 : boxY + 15} // Position label near the box
-            fill={issue.color}
-            fontSize="14"
-            fontWeight="bold"
-          >
-            {issue.label}
-          </SvgText>
-        </React.Fragment>
+        <Rect
+          key={index}
+          x={boxX}
+          y={boxY}
+          width={boxWidth}
+          height={boxHeight}
+          strokeWidth="2"
+          stroke="red"
+          fill="rgba(255, 0, 0, 0.2)"
+        />
       );
     });
   };
-
-  const renderDetailedSkinAnalysis = () => (
-    <View style={styles.detailedAnalysisContainer}>
-      {skinIssues.map((issue, index) => (
-        <View key={index} style={styles.detailedItem}>
-          <Text style={styles.detailedText}>Class: {issue.label}</Text>
-          <Text style={styles.detailedText}>Confidence: {issue.confidence}</Text>
-          <Text style={styles.detailedText}>Coordinates: {issue.coordinates}</Text>
-        </View>
-      ))}
-    </View>
-  );
 
   return (
     <SafeArea>
@@ -102,10 +110,7 @@ const Result = () => {
             <View style={{ position: "relative", marginBottom: 20 }}>
               <Image
                 source={{ uri: imageUri }}
-                style={{
-                  width: imageDimensions.width,
-                  height: imageDimensions.height,
-                }}
+                style={{ width: imageDimensions.width, height: imageDimensions.height }}
                 resizeMode="contain"
               />
               <Svg
@@ -113,19 +118,20 @@ const Result = () => {
                 width={imageDimensions.width}
                 style={{ position: "absolute", top: 0, left: 0 }}
               >
-                {renderSkinIssuesOnImage()}
+                {renderBoundingBoxes()}
               </Svg>
             </View>
           )}
-          <Title>Skin Issue Overview</Title>
-          {renderDetailedSkinAnalysis()}
-          <ConsultButton onPress={() => navigation.navigate("Product", { diagnosis, skinType })}>
+          {renderDiagnosisResult()}
+          <Title>Skin Type Analysis</Title>
+          {renderSkinTypeResult()}
+          <ConsultButton
+            onPress={() => navigation.navigate("Product", { diagnosis, skinType })}
+          >
             <ConsultButtonText>Consult Products</ConsultButtonText>
           </ConsultButton>
         </ContentContainer>
       </ScrollContainer>
-
-      {/* Bottom Bar */}
       <BottomBar>
         <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <Ionicons name="home-outline" size={24} color="#333" />
@@ -147,23 +153,5 @@ const Result = () => {
     </SafeArea>
   );
 };
-
-const styles = StyleSheet.create({
-  detailedAnalysisContainer: {
-    marginVertical: 20,
-    paddingHorizontal: 15,
-  },
-  detailedItem: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 5,
-  },
-  detailedText: {
-    fontSize: 14,
-    color: "#333",
-    marginBottom: 2,
-  },
-});
 
 export default Result;
