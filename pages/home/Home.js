@@ -133,7 +133,7 @@ const Home = () => {
       });
 
       const response = await axios.post(
-        "https://f842-105-71-144-100.ngrok-free.app/classify",
+        "https://04bd-105-74-67-132.ngrok-free.app/classify",
         formData,
         {
           headers: {
