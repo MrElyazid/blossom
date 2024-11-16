@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, ScrollView, ActivityIndicator, Platform, KeyboardAvoidingView, SafeAreaView } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View, Text, TextInput, Button, ScrollView, ActivityIndicator, Platform, KeyboardAvoidingView, SafeAreaView, TouchableOpacity, Switch } from "react-native";
 import { auth } from "../../firebaseConfig";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { BottomBar, BottomBarItem, BottomBarText } from "../../styles/home/HomeStyled";
 
 const Chatbot = () => {
   const navigation = useNavigation();
@@ -13,7 +11,7 @@ const Chatbot = () => {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dates, setDates] = useState([]); // Store available scan dates
-  const [selectedDate, setSelectedDate] = useState(""); // Store the selected scan date
+  const [selectedDates, setSelectedDates] = useState([]); // Store selected dates (array)
   const [loadingDates, setLoadingDates] = useState(true); // Loading state for dates
 
   // Fetch available scan dates
@@ -36,51 +34,87 @@ const Chatbot = () => {
     fetchDates();
   }, []);
 
-  const handleAskQuestion = async () => {
-    if (!question || !selectedDate) return;
+  const handleSelectDate = (date) => {
+    // Add or remove date from selectedDates
+    setSelectedDates((prevSelectedDates) => {
+      if (prevSelectedDates.includes(date)) {
+        return prevSelectedDates.filter((item) => item !== date); // Deselect date
+      } else {
+        return [...prevSelectedDates, date]; // Select date
+      }
+    });
+  };
 
-    setLoading(true);
+  const handleAskQuestion = async () => {
+    if (!question) return;
+
+    setLoading(true); // Start loading
     const user = auth.currentUser;
-    const email = user ? user.email : "yassine@gmail.com";
+    const email = user ? user.email : "yassine@gmail.com"; // Default email if user is not authenticated
+
+    // Base request data
+    const requestData = {
+      "user-email": email,
+      "question": question,
+    };
+
+    // Check if any dates are selected
+    if (selectedDates.length === 1) {
+      // Possibility 2: One date selected - send as `scan-date`
+      requestData["scan-date"] = selectedDates[0];
+    } else if (selectedDates.length === 2) {
+      // Possibility 3: Two dates selected - send as `start-date` and `end-date`
+      requestData["start-date"] = selectedDates[0];
+      requestData["end-date"] = selectedDates[1];
+    }
+
+    // Log the final request data
+    console.log("Request Data Before Sending:", requestData);
 
     try {
-      const response = await axios.post("https://rag-bl-6rgb.vercel.app/ask", {
-        question,
-        "user-email": email,
-        "scan-date": selectedDate,
-      });
+      const response = await axios.post("https://rag-bl-6rgb.vercel.app/ask", requestData);
 
-      const botAnswer = response.data || "No response from bot";
+      // Assuming the response is in the form: { "response": "your answer" }
+      const botAnswer = response.data.response || "No response from bot";
+
+      // Add the question and answer to responses
       setResponses((prevResponses) => [
         ...prevResponses,
         { question, answer: botAnswer },
       ]);
-      setQuestion("");
+      setQuestion(""); // Clear the question input
     } catch (error) {
-      console.error("Error asking question:", error);
+      if (error.response) {
+        console.error("Error Response Data:", error.response.data);
+        console.error("Error Response Status:", error.response.status);
+      } else {
+        console.error("Error asking question:", error.message);
+      }
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
         <View style={{ flex: 1 }}>
-          <View style={{ padding: 20 }}>
-            <Ionicons 
-              name="arrow-back" 
-              size={24} 
-              color="#333" 
-              onPress={() => navigation.navigate("Home")} 
-              style={{ position: 'absolute', top: 20, left: 20 }} 
+          {/* Custom Navigation Bar */}
+          <View style={{ height: 60, backgroundColor: '#6200ea', justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 15 }}>
+            <Ionicons
+              name="arrow-back"
+              size={30}
+              color="#fff"
+              onPress={() => navigation.navigate("Home")}
+              style={{ position: 'absolute', left: 15 }}
             />
-            <Text style={{ fontSize: 24, textAlign: 'center', marginBottom: 20, marginTop: 20 }}>Chatbot</Text>
+            <Text style={{ color: "#fff", fontSize: 20 }}>Chatbot</Text>
           </View>
+
           <ScrollView style={{ flex: 1, padding: 20, paddingBottom: 100 }}>
             {responses.map((item, index) => (
               <View key={index} style={{ marginBottom: 10 }}>
@@ -90,21 +124,23 @@ const Chatbot = () => {
             ))}
             {loading && <ActivityIndicator size="large" color="#0000ff" />}
           </ScrollView>
+
           <View style={{ padding: 20, paddingBottom: 80 }}>
-            <Text style={{ marginBottom: 10 }}>Select Scan Date:</Text>
+            <Text style={{ marginBottom: 10 }}>Select Scan Dates (can select 1 or 2 dates):</Text>
             {loadingDates ? (
-              <ActivityIndicator size="small" color="#0000ff" /> // Loading indicator for dates
+              <ActivityIndicator size="small" color="#0000ff" />
             ) : (
-              <Picker
-                selectedValue={selectedDate}
-                onValueChange={(itemValue) => setSelectedDate(itemValue)}
-                style={{ height: 50, marginBottom: 10 }}
-              >
-                <Picker.Item label="Select a date" value="" />
+              <View>
                 {dates.map((date, index) => (
-                  <Picker.Item key={index} label={date} value={date} />
+                  <View key={index} style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                    <Switch
+                      value={selectedDates.includes(date)}
+                      onValueChange={() => handleSelectDate(date)}
+                    />
+                    <Text>{date}</Text>
+                  </View>
                 ))}
-              </Picker>
+              </View>
             )}
             <TextInput
               placeholder="Ask your question..."
@@ -120,24 +156,6 @@ const Chatbot = () => {
             <Button title="Send" onPress={handleAskQuestion} />
           </View>
         </View>
-        <BottomBar style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
-          <BottomBarItem onPress={() => navigation.navigate("Home")}>
-            <Ionicons name="home-outline" size={24} color="#333" />
-            <BottomBarText>Home</BottomBarText>
-          </BottomBarItem>
-          <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-            <Ionicons name="bookmark-outline" size={24} color="#333" />
-            <BottomBarText>Saved</BottomBarText>
-          </BottomBarItem>
-          <BottomBarItem onPress={() => navigation.navigate("History")}>
-            <Ionicons name="stats-chart-outline" size={24} color="#333" />
-            <BottomBarText>History</BottomBarText>
-          </BottomBarItem>
-          <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-            <Ionicons name="person-outline" size={24} color="#333" />
-            <BottomBarText>Profile</BottomBarText>
-          </BottomBarItem>
-        </BottomBar>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
