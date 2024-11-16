@@ -63,21 +63,51 @@ const Product = () => {
         console.log("Skin Type Class:", skinTypeClass);
 
         const productsRef = collection(db, "products");
-        const q = query(
-          productsRef,
-          where(skinCondition, ">", 0),
-          orderBy(skinCondition, "desc"),
-          orderBy(skinTypeClass, "desc"),
-          limit(3)
-        );
+        let q;
+
+        // Create query based on available model results
+        if (skinCondition && skinTypeClass) {
+          // Both models returned results
+          q = query(
+            productsRef,
+            where(skinCondition, ">", 0),
+            orderBy(skinCondition, "desc"),
+            orderBy(skinTypeClass, "desc"),
+            limit(3)
+          );
+        } else if (skinCondition) {
+          // Only skin condition model returned result
+          q = query(
+            productsRef,
+            where(skinCondition, ">", 0),
+            orderBy(skinCondition, "desc"),
+            limit(3)
+          );
+        } else if (skinTypeClass) {
+          // Only skin type model returned result
+          q = query(
+            productsRef,
+            where(skinTypeClass, ">", 0),
+            orderBy(skinTypeClass, "desc"),
+            limit(3)
+          );
+        } else {
+          throw new Error("No valid model results available");
+        }
 
         const querySnapshot = await getDocs(q);
-        const fetchedProducts = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          compatibility_score:
-            doc.data()[skinCondition] + doc.data()[skinTypeClass],
-        }));
+        const fetchedProducts = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          // Calculate compatibility score based on available results
+          const score = (skinCondition ? data[skinCondition] || 0 : 0) +
+                       (skinTypeClass ? data[skinTypeClass] || 0 : 0);
+          
+          return {
+            id: doc.id,
+            ...data,
+            compatibility_score: score,
+          };
+        });
 
         console.log("Fetched Products:", fetchedProducts);
         setProducts(fetchedProducts);
