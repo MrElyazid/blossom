@@ -3,14 +3,12 @@ import { View, Image, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Svg, { Rect } from "react-native-svg";
-import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled'; 
+import axios from "axios";
+import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from "../../styles/bottomBarStyled";
 import {
   SafeArea,
   ScrollContainer,
   ContentContainer,
-  // BottomBar,
-  // BottomBarItem,
-  // BottomBarText,
 } from "../../styles/home/HomeStyled";
 import {
   BackButton,
@@ -24,41 +22,87 @@ import {
   ConsultButtonText,
   Title1,
 } from "../../styles/home/ResultStyled";
-import { fetchProducts } from "../utils/fetchProducts"; // Import the reusable function
+import { fetchProducts } from "../utils/fetchProducts"; // Reusable function
 
 const Result = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { diagnosis, skinType, imageUri , scanDate, email} = route.params || {};
+  const { diagnosis, skinType, imageUri, scanDate, email, istaken } = route.params || {};
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const [isMoreThanOneDay, setIsMoreThanOneDay] = useState(false);
 
 
-  //hadi bach t insere data f route dial chatbot 
-  const insertData = async () => {
+  //probleme de comparaison + scan date() dans home.js + axios err if no dates 
+  const fetchDates = async () => {
+    console.log("fetchDates called");
+    if (!email) {
+      console.error("Email is missing.");
+      return;
+    }
     try {
-      // Get skin condition and skin type class
-      let skinCondition =
-        diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") ||
-        "";
-      let skinTypeClass =
+      const response = await axios.post("https://rag-bl-6rgb.vercel.app/getdates", { "user_email": email });
+      const scanDates = response.data.scan_dates || [];
+      console.log("Fetched Dates:", scanDates);
+  
+      if (scanDates.length === 0) {
+        console.log("No previous scan dates found.");
+        setIsMoreThanOneDay(true); // Aucun scan antérieur, autoriser l'insertion.
+        return;
+      }
+  
+      if (!scanDate) {
+        console.error("scanDate is undefined.");
+        return;
+      }
+  
+      let moreThanOneDay = false;
+  
+      for (let i = 0; i < scanDates.length; i++) {
+        const pastDate = scanDates[i];
+        const diffTime = Math.abs(new Date(scanDate) - new Date(pastDate));
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  
+        console.log(`Comparing: scanDate=${scanDate}, pastDate=${pastDate}, Diff Days=${diffDays}`);
+        if (diffDays > 0) {
+          moreThanOneDay = true;
+          break;
+        }
+      }
+  
+      setIsMoreThanOneDay(moreThanOneDay);
+    } catch (error) {
+      console.error("Error fetching scan dates:", error);
+    }
+  };
+  
+  
+
+  const insertData = async () => {
+    if (!istaken && !isMoreThanOneDay) {
+      console.log("Skipping data insertion: conditions not met (istaken=false and isMoreThanOneDay=false).");
+      return;
+    }
+    try {
+      const skinCondition =
+        diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") || "";
+      const skinTypeClass =
         skinType?.top?.toLowerCase().replace("-", "_") || "";
   
       console.log("Skin Condition:", skinCondition);
       console.log("Skin Type Class:", skinTypeClass);
   
-      // Fetch products based on skin condition and type
       const fetchedProducts = await fetchProducts(skinCondition, skinTypeClass);
-      
-      console.log("Fetched Products from insertData:", fetchedProducts);
   
-      // Prepare data for insertion
+      if (!fetchedProducts || fetchedProducts.length === 0) {
+        console.error("No products fetched.");
+        return;
+      }
+  
       const data = {
         "user-email": email,
         "scan-date": scanDate,
         "user-skin-type": skinType?.top || "Unknown",
-        // Use Set to remove duplicate skin diseases
         "user-skin-diseases": [...new Set(diagnosis?.predictions?.map(prediction => prediction.class) || ["Unknown"])],
-        // Here we map over the fetched products and add details to the array
         "products": fetchedProducts.map((product) => ({
           name: product.name || "Unknown",
           description: product.description || "No description available",
@@ -83,10 +127,10 @@ const Result = () => {
           price: product.price || "No price available",
         })),
       };
-  
       console.log("Data to be inserted:", data);
-
-      
+  
+     // const response = await axios.post("https://rag-bl-6rgb.vercel.app/insert", data);
+     // console.log("Response from insertion:", response.data);
     } catch (error) {
       console.error("Error fetching products or inserting data:", error);
     }
@@ -94,7 +138,13 @@ const Result = () => {
   
 
   useEffect(() => {
-    insertData();
+    const init = async () => {
+      console.log("Initializing...");
+      await fetchDates();
+      await insertData();
+    };
+    init();
+
     if (imageUri) {
       Image.getSize(imageUri, (width, height) => {
         const screenWidth = Dimensions.get("window").width;
@@ -105,8 +155,7 @@ const Result = () => {
         });
       });
     }
-  }, [imageUri, diagnosis, skinType]); // Add dependencies here
-  
+  }, [imageUri, diagnosis, skinType]);
 
   const renderDiagnosisResult = () => {
     if (!diagnosis || !diagnosis.predictions || diagnosis.predictions.length === 0) {
@@ -116,11 +165,11 @@ const Result = () => {
     return diagnosis.predictions.map((prediction, index) => (
       <ResultItem key={index}>
         <ClassText>Class: {prediction.class}</ClassText>
-        {/* {console.log("Class:", prediction.class)} */}
-        <ConfidenceText>Confidence: {(prediction.confidence * 100).toFixed(2)}%</ConfidenceText>
+        <ConfidenceText>
+          Confidence: {(prediction?.confidence * 100)?.toFixed(2) || "N/A"}%
+        </ConfidenceText>
         <CoordinatesText>
-          Coordinates: ({(prediction.x ).toFixed(2)}, {(prediction.y).toFixed(2)}) 
-          - ({((prediction.x + prediction.width)).toFixed(2)}, {((prediction.y + prediction.height)).toFixed(2)})
+          Coordinates: ({(prediction.x).toFixed(2)}, {(prediction.y).toFixed(2)}) - ({((prediction.x + prediction.width)).toFixed(2)}, {((prediction.y + prediction.height)).toFixed(2)})
         </CoordinatesText>
       </ResultItem>
     ));
@@ -134,8 +183,9 @@ const Result = () => {
     return (
       <ResultItem>
         <ClassText>Skin Type: {skinType.top}</ClassText>
-        {/* {console.log("Skin type:", skinType.top)} */}
-        <ConfidenceText>Confidence: {(skinType.confidence * 100).toFixed(2)}%</ConfidenceText>
+        <ConfidenceText>
+          Confidence: {(skinType.confidence * 100)?.toFixed(2) || "N/A"}%
+        </ConfidenceText>
       </ResultItem>
     );
   };
@@ -202,23 +252,19 @@ const Result = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-      <BottomBarItem onPress={() => navigation.navigate("Home")}>
-        <StyledIonicons name="home-outline" />
-        <BottomBarText>HOME</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-        <StyledIonicons name="bookmark-outline" />
-        <BottomBarText>PRODUCTS</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("History")}>
-        <StyledIonicons name="stats-chart-outline" />
-        <BottomBarText>History</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-        <StyledIonicons name="person-outline" />
-        <BottomBarText>ACCOUNT</BottomBarText>
-      </BottomBarItem>
-    </BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
+          <StyledIonicons name="home-outline" />
+          <BottomBarText>HOME</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <StyledIonicons name="save-outline" />
+          <BottomBarText>FAVORITES</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>PROFILE</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
     </SafeArea>
   );
 };

@@ -70,15 +70,15 @@ const Chatbot = () => {
 
     // Check if any dates are selected
     if (selectedDates.length === 1) {
-      requestData["scan_date"] = selectedDates[0]; // One date selected
+      requestData["scan-date"] = selectedDates[0]; // One date selected
       console.log("Selected Date:", selectedDates[0]);
     } else if (selectedDates.length === 2) {
-      requestData["start_date"] = selectedDates[0];
-      requestData["end_date"] = selectedDates[1]; // Two dates selected
+      requestData["start-date"] = selectedDates[0];
+      requestData["end-date"] = selectedDates[1]; // Two dates selected
       console.log("Start Date:", selectedDates[0]);
       console.log("End Date:", selectedDates[1]);
     }
-
+          
     try {
       const response = await axios.post("https://rag-bl-6rgb.vercel.app/ask", requestData);
 

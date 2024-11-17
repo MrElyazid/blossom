@@ -51,7 +51,7 @@ const Home = () => {
   const [skinTypeResult, setSkinTypeResult] = useState(null);
   const navigation = useNavigation();
   const [scanDate, setScanDate] = useState(null);
-
+const [istaken, setIstaken] = useState(false);
   useFocusEffect(
     React.useCallback(() => {
       setImage(null);
@@ -60,6 +60,8 @@ const Home = () => {
       setDiagnosisComplete(false);
       setDiagnosisResult(null);
       setSkinTypeResult(null);
+      setIstaken(false);
+      setScanDate(null);
     }, [])
   );
 
@@ -88,6 +90,7 @@ const Home = () => {
     });
     if (!result.canceled) {
       saveImage(result.assets[0].uri);
+      setIstaken(false);
     }
   };
 
@@ -99,6 +102,7 @@ const Home = () => {
     });
     if (!result.canceled) {
       saveImage(result.assets[0].uri);
+      setIstaken(true);
     }
   };
 
@@ -316,8 +320,9 @@ const Home = () => {
         diagnosis: diagnosisResult,
         skinType: skinTypeResult,
         imageUri: image,
-        scanDate: scanDate,
-        email:user.email
+        scanDate: "2024-11-18",
+        email:user.email,
+        istaken: istaken
       });
     } else {
       diagnose();
@@ -387,5 +392,6 @@ const Home = () => {
     </SafeArea>
   );
 };
+
 
 export default Home;
