@@ -53,8 +53,8 @@ const Result = () => {
         <ClassText>Class: {prediction.class}</ClassText>
         <ConfidenceText>Confidence: {(prediction.confidence * 100).toFixed(2)}%</ConfidenceText>
         <CoordinatesText>
-          Coordinates: ({(prediction.x1 * 100).toFixed(2)}%, {(prediction.y1 * 100).toFixed(2)}%) 
-          - ({(prediction.x2 * 100).toFixed(2)}%, {(prediction.y2 * 100).toFixed(2)}%)
+          Coordinates: ({(prediction.x ).toFixed(2)}, {(prediction.y).toFixed(2)}) 
+          - ({((prediction.x + prediction.width)).toFixed(2)}, {((prediction.y + prediction.height)).toFixed(2)})
         </CoordinatesText>
       </ResultItem>
     ));

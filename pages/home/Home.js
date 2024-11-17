@@ -144,7 +144,8 @@ const Home = () => {
         method: "POST",
         url: "https://detect.roboflow.com/skin-disease-detection-vtmmm/3",
         params: {
-          api_key: "cQ1a6z6OVW1zSOmYdupk", // Use your actual API key
+          api_key: "cQ1a6z6OVW1zSOmYdupk",
+          include_coordinates: true,
         },
         data: base64Image,
         headers: {
