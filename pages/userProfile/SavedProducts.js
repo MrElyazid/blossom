@@ -11,11 +11,12 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
+import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled';  
 import {
   SafeArea,
-  BottomBar,
-  BottomBarItem,
-  BottomBarText,
+  // BottomBar,
+  // BottomBarItem,
+  // BottomBarText,
 } from "../../styles/home/HomeStyled";
 import {
   ProductCard,
@@ -116,23 +117,23 @@ const SavedProducts = () => {
         )}
       </View>
       <BottomBar>
-        <BottomBarItem onPress={() => navigation.navigate("Home")}>
-          <Ionicons name="home-outline" size={24} color="#333" />
-          <BottomBarText>Home</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-          <Ionicons name="bookmark-outline" size={24} color="#333" />
-          <BottomBarText>Saved</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("History")}>
-          <Ionicons name="stats-chart-outline" size={24} color="#333" />
-          <BottomBarText>History</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-          <Ionicons name="person-outline" size={24} color="#333" />
-          <BottomBarText>Profile</BottomBarText>
-        </BottomBarItem>
-      </BottomBar>
+      <BottomBarItem onPress={() => navigation.navigate("Home")}>
+        <StyledIonicons name="home-outline" />
+        <BottomBarText>HOME</BottomBarText>
+      </BottomBarItem>
+      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+        <StyledIonicons name="bookmark-outline" />
+        <BottomBarText>PRODUCTS</BottomBarText>
+      </BottomBarItem>
+      <BottomBarItem onPress={() => navigation.navigate("History")}>
+        <StyledIonicons name="stats-chart-outline" />
+        <BottomBarText>History</BottomBarText>
+      </BottomBarItem>
+      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+        <StyledIonicons name="person-outline" />
+        <BottomBarText>ACCOUNT</BottomBarText>
+      </BottomBarItem>
+    </BottomBar>
     </SafeArea>
   );
 };

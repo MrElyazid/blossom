@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled'; 
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Alert } from "react-native";
 import axios from "axios";
@@ -26,11 +27,13 @@ import {
   ImageContainer,
   PreviewImage,
   Loader,
-  BottomBar,
-  BottomBarItem,
-  BottomBarText,
+  // BottomBar,
+  // BottomBarItem,
+  // BottomBarText,
   ProgressBar,
   ProgressBarFill,
+  AnalyseButton,
+  ButtonTextAnalyse,
 } from "../../styles/home/HomeStyled";
 import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 
@@ -283,53 +286,53 @@ const Home = () => {
         <ContentContainer>
           <Logo source={BlossomLogo} />
           <Text>Select an option to continue</Text>
-          <Button onPress={pickImage}>
-            <ButtonText>Upload Image</ButtonText>
-          </Button>
-          <Button onPress={takePhoto}>
-            <ButtonText>Take Photo</ButtonText>
-          </Button>
-          <Button onPress={handleChatbotButton}>
-            <ButtonText>Chat with Bot</ButtonText>
-          </Button>
           {image && (
             <ImageContainer>
               <PreviewImage source={{ uri: image }} />
-              <Button onPress={handleDiagnosisButton} disabled={isLoading}>
-                <ButtonText>
-                  {diagnosisComplete ? "See Result" : "Diagnosis"}
-                </ButtonText>
-              </Button>
+              <AnalyseButton onPress={handleDiagnosisButton} disabled={isLoading}>
+                <ButtonTextAnalyse>
+                  {diagnosisComplete ? "See Result" : "ANALYSE"}
+                </ButtonTextAnalyse>
+              </AnalyseButton>
             </ImageContainer>
           )}
           {isLoading && (
             <>
-              <Loader size="large" color="#ff69b4" />
+              <Loader size="large" color="#E9AFB9" />
               <ProgressBar>
                 <ProgressBarFill style={{ width: `${progress}%` }} />
               </ProgressBar>
             </>
           )}
+          <Button onPress={pickImage}>
+            <ButtonText>UPLOAD IMAGE</ButtonText>
+          </Button>
+          <Button onPress={takePhoto}>
+            <ButtonText>TAKE PHOTO</ButtonText>
+          </Button>
+          <Button onPress={handleChatbotButton}>
+            <ButtonText>CHAT WITH BOT</ButtonText>
+          </Button>
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-        <BottomBarItem onPress={() => navigation.navigate("Home")}>
-          <Ionicons name="home-outline" size={24} color="#333" />
-          <BottomBarText>Home</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-          <Ionicons name="bookmark-outline" size={24} color="#333" />
-          <BottomBarText>Saved</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("History")}>
-          <Ionicons name="stats-chart-outline" size={24} color="#333" />
-          <BottomBarText>History</BottomBarText>
-        </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-          <Ionicons name="person-outline" size={24} color="#333" />
-          <BottomBarText>Profile</BottomBarText>
-        </BottomBarItem>
-      </BottomBar>
+      <BottomBarItem onPress={() => navigation.navigate("Home")}>
+        <StyledIonicons name="home-outline" />
+        <BottomBarText>HOME</BottomBarText>
+      </BottomBarItem>
+      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+        <StyledIonicons name="bookmark-outline" />
+        <BottomBarText>PRODUCTS</BottomBarText>
+      </BottomBarItem>
+      <BottomBarItem onPress={() => navigation.navigate("History")}>
+        <StyledIonicons name="stats-chart-outline" />
+        <BottomBarText>History</BottomBarText>
+      </BottomBarItem>
+      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+        <StyledIonicons name="person-outline" />
+        <BottomBarText>ACCOUNT</BottomBarText>
+      </BottomBarItem>
+    </BottomBar>
     </SafeArea>
   );
 };

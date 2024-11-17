@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
+import { Platform } from "react-native";
 
 // pages
 import Home from "./pages/home/Home";
@@ -21,28 +22,48 @@ const Stack = createStackNavigator();
 
 const WelcomeScreen = ({ navigation }) => {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
       <Image
         source={require("./assets/BlossomLogo.png")}
-        style={{ width: 150, height: 150, borderRadius: 75 }}
+        style={{ width: 350, height: 300, borderRadius: 75 }}
       />
-      <Text style={{ marginTop: 20, fontSize: 18, textAlign: "center" }}>
-        Your Dermatologist AI companion
+      
+      <Text
+        style={{
+          marginTop: 15,
+          fontSize: 23,
+          textAlign: "center",
+          fontFamily: Platform.OS === "ios" ? "American Typewriter" : "serif",
+        }}
+      >
+        YOUR DERMATOLOGIST AI COMPANION
       </Text>
       <TouchableOpacity
         style={{
           marginTop: 40,
           padding: 10,
-          backgroundColor: "#007AFF",
-          borderRadius: 5,
+          paddingLeft: 67,
+          paddingRight: 67,
+          backgroundColor: "#E9AFB9",
+          borderRadius: 20,
+          fontSize: 30,
         }}
         onPress={() => navigation.navigate("Home")}
       >
-        <Text style={{ color: "white" }}>Launch</Text>
+        <Text
+          style={{
+            color: "black",
+            fontFamily: Platform.OS === "ios" ? "Comic Sans MS" : "Comic Sans",
+            fontSize: 20,
+          }}
+        >
+          GET STARTED
+        </Text>
       </TouchableOpacity>
     </View>
   );
 };
+
 
 const App = () => {
   const [initializing, setInitializing] = useState(true);

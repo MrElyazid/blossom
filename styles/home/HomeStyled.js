@@ -1,10 +1,12 @@
 // styles/home/HomeStyled.js
 import styled from "styled-components/native";
 import { ScrollView, SafeAreaView } from "react-native";
+import { Platform } from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 
 export const SafeArea = styled(SafeAreaView)`
   flex: 1;
-  background-color: #f0f8ff;
+  background-color: #ffffff;
 `;
 
 export const ScrollContainer = styled(ScrollView)`
@@ -16,43 +18,63 @@ export const ContentContainer = styled.View`
   align-items: center;
   justify-content: flex-start;
   padding: 20px;
-  padding-bottom: 90px; /* Add padding to accommodate the BottomBar */
+  padding-bottom: 70px;
 `;
 
 export const Logo = styled.Image`
-  width: 120px;
-  height: 120px;
-  border-radius: 60px;
-  border-width: 3px;
-  border-color: #ff69b4;
-  margin-bottom: 30px;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  width: 250;
+  height: 200;
+  borderRadius: 75px;
 `;
 
 export const Text = styled.Text`
   font-size: 22px;
-  color: #333;
-  margin-bottom: 30px;
+  color: #000000;
+  margin-bottom: 20px;
   text-align: center;
   font-weight: 600;
+  font-family: ${Platform.OS === "ios" ? "American Typewriter" : "serif"};
 `;
 
 export const Button = styled.TouchableOpacity`
-  background-color: #ff69b4;
-  padding-horizontal: 30px;
-  padding-vertical: 15px;
+  background-color: #E9AFB9;
+  padding-vertical: 10px;
+  min-width: 200px;  
+  max-width: 300px;  
   border-radius: 25px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   shadow-color: #000;
   shadow-offset: 0px 2px;
   shadow-opacity: 0.25;
   shadow-radius: 3.84px;
   elevation: 5;
+  align-items: center;
+  justify-content: center;
 `;
+
 
 export const ButtonText = styled.Text`
   color: white;
   font-size: 18px;
   font-weight: bold;
+  font-family: ${Platform.OS === "ios" ? "American Typewriter" : "serif"};
+`;
+
+export const AnalyseButton = styled(Button)`
+  color: #E9AFB9; 
+  background-color: white;
+  font-size: 18px; 
+  border-width: 1px;
+  border-color: #E9AFB9;
+  margin-top: 15px;
+`;
+
+export const ButtonTextAnalyse = styled(ButtonText)`
+  color: #E9AFB9; 
+  background-color: white;
+  font-size: 18px; 
 `;
 
 export const ImageContainer = styled.View`
@@ -64,10 +86,10 @@ export const ImageContainer = styled.View`
 export const PreviewImage = styled.Image`
   width: 250px;
   height: 250px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-radius: 10px;
   border-width: 2px;
-  border-color: #ff69b4;
+  border-color: #E9AFB9;
 `;
 
 export const Loader = styled.ActivityIndicator`
@@ -81,30 +103,39 @@ export const Loader = styled.ActivityIndicator`
   background-color: rgba(255, 255, 255, 0.7);
 `;
 
-export const BottomBar = styled.View`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  flex-direction: row;
-  justify-content: space-around;
-  padding: 10px 0;
-  background-color: #f8d7da;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  height: 70px;
-`;
+// export const BottomBar = styled.View`
+//   position: absolute;
+//   bottom: 0;
+//   left: 0;
+//   right: 0;
+//   flex-direction: row;
+//   justify-content: space-around;
+//   padding: 10px 0;
+//   background-color: #ffffff;
+//   border-top-left-radius: 25px;
+//   border-top-right-radius: 25px;
+//   border-bottom-left-radius: 10px;
+//   border-bottom-right-radius: 10px;
+//   height: 70px;
+//   border-width: 2px; 
+//   border-color: #E9AFB9; 
+// `;
 
-export const BottomBarItem = styled.TouchableOpacity`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-`;
+// export const BottomBarItem = styled.TouchableOpacity`
+//   flex: 1;
+//   align-items: center;
+//   justify-content: center;
+// `;
 
-export const BottomBarText = styled.Text`
-  color: #333;
-  font-size: 12px;
-  margin-top: 5px;
+// export const BottomBarText = styled.Text`
+//   color: #333;
+//   font-size: 12px;
+//   margin-top: 5px;
+// `;
+
+export const StyledIonicons = styled(Ionicons)`
+  size: 24px;
+  color: #E9AFB9;
 `;
 
 export const ProgressBar = styled.View`
@@ -118,5 +149,5 @@ export const ProgressBar = styled.View`
 
 export const ProgressBarFill = styled.View`
   height: 100%;
-  background-color: #ff69b4;
+  background-color: #E9AFB9;
 `;
