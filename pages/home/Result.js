@@ -22,6 +22,7 @@ import {
   NoDataText,
   ConsultButton,
   ConsultButtonText,
+  Title1,
 } from "../../styles/home/ResultStyled";
 import { fetchProducts } from "../utils/fetchProducts"; // Import the reusable function
 
@@ -170,9 +171,9 @@ const Result = () => {
       <ScrollContainer>
         <ContentContainer>
           <BackButton onPress={() => navigation.navigate("Home")}>
-            <Ionicons name="arrow-back" size={24} color="#ff69b4" />
+            <Ionicons name="arrow-back" size={24} />
           </BackButton>
-          <Title>Diagnosis Result</Title>
+          <Title>SKIN ANALYSIS</Title>
           {imageUri && (
             <View style={{ position: "relative", marginBottom: 20 }}>
               <Image
@@ -189,8 +190,9 @@ const Result = () => {
               </Svg>
             </View>
           )}
+          <Title1>SKIN DISEASE</Title1>
           {renderDiagnosisResult()}
-          <Title>Skin Type Analysis</Title>
+          <Title1>SKIN TYPE ANALYSIS</Title1>
           {renderSkinTypeResult()}
           <ConsultButton
             onPress={() => navigation.navigate("Product", { diagnosis, skinType })}

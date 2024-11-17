@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Linking, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Linking, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled';  
 import { Ionicons } from "@expo/vector-icons";
 import { db, auth } from "../../firebaseConfig";
 import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { SafeArea, ScrollContainer, ContentContainer } from "../../styles/home/HomeStyled";
-import { BackButton, BackButtonText, ProductCard, ProductName, ProductInfo, ProductLink } from "../../styles/products/ProductStyled";
+import { BackButton, BackButtonText, ProductCard, ProductName, ProductInfo, ProductLink, Text, SaveButton, SaveButtonText } from "../../styles/products/ProductStyled";
 import { fetchProducts } from "../utils/fetchProducts";  // Import the fetchProducts utility
 
 const Product = () => {
@@ -93,22 +93,15 @@ const Product = () => {
       <ProductLink onPress={() => Linking.openURL(product.link)}>
         View Product
       </ProductLink>
-      <TouchableOpacity
+      <SaveButton
+        isSaved={savedProducts.includes(product.id)}
         onPress={() => saveProduct(product)}
-        style={{
-          backgroundColor: savedProducts.includes(product.id)
-            ? "#ccc"
-            : "#007AFF",
-          padding: 10,
-          borderRadius: 5,
-          marginTop: 10,
-        }}
         disabled={savedProducts.includes(product.id)}
       >
-        <Text style={{ color: "white", textAlign: "center" }}>
-          {savedProducts.includes(product.id) ? "Saved" : "Save Product"}
-        </Text>
-      </TouchableOpacity>
+        <SaveButtonText isSaved={savedProducts.includes(product.id)}>
+    {savedProducts.includes(product.id) ? "Saved" : "Save Product"}
+  </SaveButtonText>
+      </SaveButton>
     </ProductCard>
   );
 
@@ -116,10 +109,10 @@ const Product = () => {
     <SafeArea>
       <ScrollContainer>
         <ContentContainer>
-          <BackButton onPress={() => navigation.navigate("Result")}>
-            <BackButtonText>← Back</BackButtonText>
+        <BackButton onPress={() => navigation.navigate("Home")}>
+            <Ionicons name="arrow-back" size={24} />
           </BackButton>
-          <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
+          <Text>
             Recommended Products
           </Text>
           {loading ? (
