@@ -23,14 +23,77 @@ import {
   ConsultButton,
   ConsultButtonText,
 } from "../../styles/home/ResultStyled";
+import { fetchProducts } from "../utils/fetchProducts"; // Import the reusable function
 
 const Result = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { diagnosis, skinType, imageUri } = route.params || {};
+  const { diagnosis, skinType, imageUri , scanDate, email} = route.params || {};
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
+
+  //hadi bach t insere data f route dial chatbot 
+  const insertData = async () => {
+    try {
+      // Get skin condition and skin type class
+      let skinCondition =
+        diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") ||
+        "";
+      let skinTypeClass =
+        skinType?.top?.toLowerCase().replace("-", "_") || "";
+  
+      console.log("Skin Condition:", skinCondition);
+      console.log("Skin Type Class:", skinTypeClass);
+  
+      // Fetch products based on skin condition and type
+      const fetchedProducts = await fetchProducts(skinCondition, skinTypeClass);
+      
+      console.log("Fetched Products from insertData:", fetchedProducts);
+  
+      // Prepare data for insertion
+      const data = {
+        "user-email": email,
+        "scan-date": scanDate,
+        "user-skin-type": skinType?.top || "Unknown",
+        // Use Set to remove duplicate skin diseases
+        "user-skin-diseases": [...new Set(diagnosis?.predictions?.map(prediction => prediction.class) || ["Unknown"])],
+        // Here we map over the fetched products and add details to the array
+        "products": fetchedProducts.map((product) => ({
+          name: product.name || "Unknown",
+          description: product.description || "No description available",
+          category: product.category || "Uncategorized",
+          composition: product.composition || "No composition data",
+          skinConditionScores: {
+            acne: product.acne || "N/A",
+            blackheads: product.blackheads || "N/A",
+            eczema: product.eczema || "N/A",
+            rosacea: product.rosacea || "N/A",
+            wrinkles: product.wrinkles || "N/A",
+            whiteheads: product.whiteheads || "N/A",
+          },
+          skinTypeScores: {
+            normal_skin: product.normal_skin || "N/A",
+            oily_skin: product.oily_skin || "N/A",
+            dry_skin: product.dry_skin || "N/A",
+            combination_skin: product.combination_skin || "N/A",
+            sensitive_skin: product.sensitive_skin || "N/A",
+          },
+          link: product.link || "No link available",
+          price: product.price || "No price available",
+        })),
+      };
+  
+      console.log("Data to be inserted:", data);
+
+      
+    } catch (error) {
+      console.error("Error fetching products or inserting data:", error);
+    }
+  };
+  
+
   useEffect(() => {
+    insertData();
     if (imageUri) {
       Image.getSize(imageUri, (width, height) => {
         const screenWidth = Dimensions.get("window").width;
@@ -41,7 +104,8 @@ const Result = () => {
         });
       });
     }
-  }, [imageUri]);
+  }, [imageUri, diagnosis, skinType]); // Add dependencies here
+  
 
   const renderDiagnosisResult = () => {
     if (!diagnosis || !diagnosis.predictions || diagnosis.predictions.length === 0) {
@@ -51,6 +115,7 @@ const Result = () => {
     return diagnosis.predictions.map((prediction, index) => (
       <ResultItem key={index}>
         <ClassText>Class: {prediction.class}</ClassText>
+        {/* {console.log("Class:", prediction.class)} */}
         <ConfidenceText>Confidence: {(prediction.confidence * 100).toFixed(2)}%</ConfidenceText>
         <CoordinatesText>
           Coordinates: ({(prediction.x ).toFixed(2)}, {(prediction.y).toFixed(2)}) 
@@ -68,6 +133,7 @@ const Result = () => {
     return (
       <ResultItem>
         <ClassText>Skin Type: {skinType.top}</ClassText>
+        {/* {console.log("Skin type:", skinType.top)} */}
         <ConfidenceText>Confidence: {(skinType.confidence * 100).toFixed(2)}%</ConfidenceText>
       </ResultItem>
     );

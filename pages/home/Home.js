@@ -50,6 +50,7 @@ const Home = () => {
   const [diagnosisResult, setDiagnosisResult] = useState(null);
   const [skinTypeResult, setSkinTypeResult] = useState(null);
   const navigation = useNavigation();
+  const [scanDate, setScanDate] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -254,7 +255,7 @@ const Home = () => {
         skinTypeResult,
         imageUrl,
       };
-
+      setScanDate(scanData.date.split("T")[0]);
       const userDocRef = doc(db, "users", user.uid);
 
       // Check if the user document exists
@@ -307,6 +308,7 @@ const Home = () => {
   };
 
   const handleDiagnosisButton = () => {
+    const user = auth.currentUser;
     if (diagnosisComplete) {
       console.log("Diagnosis Result before navigation:", diagnosisResult);
       console.log("Skin Type Result before navigation:", skinTypeResult);
@@ -314,6 +316,8 @@ const Home = () => {
         diagnosis: diagnosisResult,
         skinType: skinTypeResult,
         imageUri: image,
+        scanDate: scanDate,
+        email:user.email
       });
     } else {
       diagnose();

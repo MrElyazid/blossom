@@ -1,44 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Linking,
-  Alert,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Linking, Alert, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled';  
 import { Ionicons } from "@expo/vector-icons";
 import { db, auth } from "../../firebaseConfig";
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  getDocs,
-  doc,
-  updateDoc,
-  arrayUnion,
-  getDoc,
-} from "firebase/firestore";
-import {
-  SafeArea,
-  ScrollContainer,
-  ContentContainer,
-  // BottomBar,
-  // BottomBarItem,
-  // BottomBarText,
-} from "../../styles/home/HomeStyled";
-import {
-  BackButton,
-  BackButtonText,
-  ProductCard,
-  ProductName,
-  ProductInfo,
-  ProductLink,
-} from "../../styles/products/ProductStyled";
+import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { SafeArea, ScrollContainer, ContentContainer } from "../../styles/home/HomeStyled";
+import { BackButton, BackButtonText, ProductCard, ProductName, ProductInfo, ProductLink } from "../../styles/products/ProductStyled";
+import { fetchProducts } from "../utils/fetchProducts";  // Import the fetchProducts utility
 
 const Product = () => {
   const [products, setProducts] = useState([]);
@@ -49,7 +18,7 @@ const Product = () => {
   const { diagnosis, skinType } = route.params || {};
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProductData = async () => {
       try {
         setLoading(true);
         console.log("useEffect triggered");
@@ -63,53 +32,9 @@ const Product = () => {
         console.log("Skin Condition:", skinCondition);
         console.log("Skin Type Class:", skinTypeClass);
 
-        const productsRef = collection(db, "products");
-        let q;
-
-        // Create query based on available model results
-        if (skinCondition && skinTypeClass) {
-          // Both models returned results
-          q = query(
-            productsRef,
-            where(skinCondition, ">", 0),
-            orderBy(skinCondition, "desc"),
-            orderBy(skinTypeClass, "desc"),
-            limit(3)
-          );
-        } else if (skinCondition) {
-          // Only skin condition model returned result
-          q = query(
-            productsRef,
-            where(skinCondition, ">", 0),
-            orderBy(skinCondition, "desc"),
-            limit(3)
-          );
-        } else if (skinTypeClass) {
-          // Only skin type model returned result
-          q = query(
-            productsRef,
-            where(skinTypeClass, ">", 0),
-            orderBy(skinTypeClass, "desc"),
-            limit(3)
-          );
-        } else {
-          throw new Error("No valid model results available");
-        }
-
-        const querySnapshot = await getDocs(q);
-        const fetchedProducts = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          // Calculate compatibility score based on available results
-          const score = (skinCondition ? data[skinCondition] || 0 : 0) +
-                       (skinTypeClass ? data[skinTypeClass] || 0 : 0);
-          
-          return {
-            id: doc.id,
-            ...data,
-            compatibility_score: score,
-          };
-        });
-
+        // Call the reusable fetchProducts function
+        const fetchedProducts = await fetchProducts(skinCondition, skinTypeClass);
+        
         console.log("Fetched Products:", fetchedProducts);
         setProducts(fetchedProducts);
 
@@ -134,7 +59,7 @@ const Product = () => {
       }
     };
 
-    fetchProducts();
+    fetchProductData();
   }, [diagnosis, skinType]);
 
   const saveProduct = async (product) => {
@@ -207,23 +132,23 @@ const Product = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-      <BottomBarItem onPress={() => navigation.navigate("Home")}>
-        <StyledIonicons name="home-outline" />
-        <BottomBarText>HOME</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-        <StyledIonicons name="bookmark-outline" />
-        <BottomBarText>PRODUCTS</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("History")}>
-        <StyledIonicons name="stats-chart-outline" />
-        <BottomBarText>History</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-        <StyledIonicons name="person-outline" />
-        <BottomBarText>ACCOUNT</BottomBarText>
-      </BottomBarItem>
-    </BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
+          <StyledIonicons name="home-outline" />
+          <BottomBarText>HOME</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <StyledIonicons name="bookmark-outline" />
+          <BottomBarText>PRODUCTS</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
+          <StyledIonicons name="stats-chart-outline" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ACCOUNT</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
     </SafeArea>
   );
 };

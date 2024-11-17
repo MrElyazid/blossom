@@ -11,7 +11,7 @@ import {
   BottomBar,
   BottomBarItem,
   BottomBarText
-} from "../../styles/home/HomeStyled"; // Add the styled components
+} from "../../styles/bottomBarStyled";
 
 const Chatbot = () => {
   const navigation = useNavigation();
@@ -28,6 +28,7 @@ const Chatbot = () => {
   useEffect(() => {
     const fetchDates = async () => {
       const user = auth.currentUser;
+      console.log("User:", user);
       const email = user ? user.email : "yassine@gmail.com"; // Default email if user is not authenticated
 
       setLoadingDates(true); // Set loading to true before fetching
