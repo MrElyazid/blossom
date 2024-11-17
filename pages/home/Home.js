@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled'; 
+import {
+  StyledIonicons,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText,
+} from "../../styles/bottomBarStyled";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Alert } from "react-native";
 import axios from "axios";
@@ -126,33 +131,34 @@ const Home = () => {
     return response.data.secure_url; // Return the URL of the uploaded image
   };
 
+
   const uploadImageAndFetchDiagnosis = async (imageUri) => {
     try {
-      const formData = new FormData();
-      formData.append("image", {
-        uri: imageUri,
-        type: "image/jpeg",
-        name: "image.jpg",
+      // Convert the image to a base64 encoded string
+      const base64Image = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
       });
-
-      const response = await axios.post(
-        "https://04bd-105-74-67-132.ngrok-free.app/classify",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted =
-              Math.round((progressEvent.loaded * 100) / progressEvent.total) /
-              2;
-            setProgress((prevProgress) =>
-              Math.max(prevProgress, percentCompleted)
-            );
-          },
-        }
-      );
-
+  
+      // Perform the POST request with base64 image data
+      const response = await axios({
+        method: "POST",
+        url: "https://detect.roboflow.com/skin-disease-detection-vtmmm/3",
+        params: {
+          api_key: "cQ1a6z6OVW1zSOmYdupk", // Use your actual API key
+        },
+        data: base64Image,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted =
+            Math.round((progressEvent.loaded * 100) / progressEvent.total) / 2;
+          setProgress((prevProgress) =>
+            Math.max(prevProgress, percentCompleted)
+          );
+        },
+      });
+  
       console.log("Diagnosis Response: ", response.data);
       return response.data;
     } catch (error) {
@@ -160,6 +166,43 @@ const Home = () => {
       throw error;
     }
   };
+
+
+
+  // const uploadImageAndFetchDiagnosis = async (imageUri) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("image", {
+  //       uri: imageUri,
+  //       type: "image/jpeg",
+  //       name: "image.jpg",
+  //     });
+
+  //     const response = await axios.post(
+  //       "https://04bd-105-74-67-132.ngrok-free.app/classify",
+  //       formData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //         },
+  //         onUploadProgress: (progressEvent) => {
+  //           const percentCompleted =
+  //             Math.round((progressEvent.loaded * 100) / progressEvent.total) /
+  //             2;
+  //           setProgress((prevProgress) =>
+  //             Math.max(prevProgress, percentCompleted)
+  //           );
+  //         },
+  //       }
+  //     );
+
+  //     console.log("Diagnosis Response: ", response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.log("Error fetching data: ", error);
+  //     throw error;
+  //   }
+  // };
 
   const fetchSkinTypeAnalysis = async (imageUri) => {
     try {
@@ -212,10 +255,10 @@ const Home = () => {
       };
 
       const userDocRef = doc(db, "users", user.uid);
-      
+
       // Check if the user document exists
       const userDoc = await getDoc(userDocRef);
-      
+
       if (!userDoc.exists()) {
         // If document doesn't exist, create it with initial data
         await setDoc(userDocRef, {
@@ -223,7 +266,7 @@ const Home = () => {
           totalScans: 1,
           createdAt: new Date().toISOString(),
           userId: user.uid,
-          email: user.email
+          email: user.email,
         });
       } else {
         // If document exists, update it
@@ -289,7 +332,10 @@ const Home = () => {
           {image && (
             <ImageContainer>
               <PreviewImage source={{ uri: image }} />
-              <AnalyseButton onPress={handleDiagnosisButton} disabled={isLoading}>
+              <AnalyseButton
+                onPress={handleDiagnosisButton}
+                disabled={isLoading}
+              >
                 <ButtonTextAnalyse>
                   {diagnosisComplete ? "See Result" : "ANALYSE"}
                 </ButtonTextAnalyse>
@@ -316,23 +362,23 @@ const Home = () => {
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-      <BottomBarItem onPress={() => navigation.navigate("Home")}>
-        <StyledIonicons name="home-outline" />
-        <BottomBarText>HOME</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-        <StyledIonicons name="bookmark-outline" />
-        <BottomBarText>PRODUCTS</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("History")}>
-        <StyledIonicons name="stats-chart-outline" />
-        <BottomBarText>History</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-        <StyledIonicons name="person-outline" />
-        <BottomBarText>ACCOUNT</BottomBarText>
-      </BottomBarItem>
-    </BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
+          <StyledIonicons name="home-outline" />
+          <BottomBarText>HOME</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <StyledIonicons name="bookmark-outline" />
+          <BottomBarText>PRODUCTS</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
+          <StyledIonicons name="stats-chart-outline" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ACCOUNT</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
     </SafeArea>
   );
 };
