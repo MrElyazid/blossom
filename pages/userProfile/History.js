@@ -11,7 +11,7 @@ import {
   // BottomBarItem,
   // BottomBarText,
 } from "../../styles/home/HomeStyled";
-import { Title } from "../../styles/userProfile/HistoryStyled";
+import { Title, ContainerH, Text1, Text2, ContentWrapper,PlaceholderText,StyledImage,TextContent,} from "../../styles/userProfile/HistoryStyled";
 
 const History = () => {
   const navigation = useNavigation();
@@ -34,37 +34,34 @@ const History = () => {
   }, []);
 
   const renderScanItem = ({ item }) => (
-    <View
-      style={{
-        marginBottom: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
-        paddingBottom: 10,
-      }}
-    >
-      <Text style={{ fontWeight: "bold" }}>
-        Date: {new Date(item.date).toLocaleString()}
-      </Text>
-      <Text>
-        Diagnosis: {item.diagnosisResult && item.diagnosisResult.predictions && item.diagnosisResult.predictions.length > 0 ? item.diagnosisResult.predictions[0].class : "N/A"}
-      </Text>
-      <Text>Skin Type: {item.skinTypeResult ? item.skinTypeResult.top : "N/A"}</Text>
-      {item.imageUrl ? (
-        <Image
+    <ContainerH>
+      <ContentWrapper>
+    {item.imageUrl ? (
+        <StyledImage
           source={{ uri: item.imageUrl }}
-          style={{ width: 100, height: 100, marginTop: 10 }}
           resizeMode="cover"
         />
       ) : (
-        <Text style={{ marginTop: 10 }}>Not available for image</Text>
+        <PlaceholderText>Not available for image</PlaceholderText>
       )}
-    </View>
+      <TextContent>
+      <Text1>
+        Date: {new Date(item.date).toLocaleString()}
+      </Text1>
+      <Text2>
+        Diagnosis: {item.diagnosisResult && item.diagnosisResult.predictions && item.diagnosisResult.predictions.length > 0 ? item.diagnosisResult.predictions[0].class : "N/A"}
+      </Text2>
+      <Text2>Skin Type: {item.skinTypeResult ? item.skinTypeResult.top : "N/A"}
+      </Text2>
+      </TextContent>
+    </ContentWrapper>
+    </ContainerH>
   );
 
   return (
     <SafeArea>
       <View style={{ flex: 1, padding: 20 }}>
-        <Title>Scan History</Title>
+        <Title>SCANNING HISTORY</Title>
         {scanHistory.length > 0 ? (
           <FlatList
             data={scanHistory.sort(

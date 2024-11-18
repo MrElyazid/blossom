@@ -98,9 +98,9 @@ const Product = () => {
         onPress={() => saveProduct(product)}
         disabled={savedProducts.includes(product.id)}
       >
-        <SaveButtonText isSaved={savedProducts.includes(product.id)}>
+      <SaveButtonText isSaved={savedProducts.includes(product.id)}>
     {savedProducts.includes(product.id) ? "Saved" : "Save Product"}
-  </SaveButtonText>
+      </SaveButtonText>
       </SaveButton>
     </ProductCard>
   );

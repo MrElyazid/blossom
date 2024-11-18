@@ -1,29 +1,25 @@
 import React, { useState } from "react";
-import {
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  Linking,
-  View,
-} from "react-native";
+import { FlatList, Alert, Linking, View } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { auth, db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
-import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from '../../styles/bottomBarStyled';  
-import {
-  SafeArea,
-  // BottomBar,
-  // BottomBarItem,
-  // BottomBarText,
-} from "../../styles/home/HomeStyled";
+import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from "../../styles/bottomBarStyled";  
 import {
   ProductCard,
   ProductName,
   ProductInfo,
-  ProductLink,
 } from "../../styles/products/ProductStyled";
+import {
+  PageTitle,
+  EmptyText,
+  ProductButton,
+  ProductButtonText,
+  ListContainer,
+  RemoveButtonText,
+  RemoveButton,
+  ButtonRow,
+} from "../../styles/userProfile/SavedProductsStyled";
+import { SafeArea } from "../../styles/home/HomeStyled";
 
 const SavedProducts = () => {
   const [savedProducts, setSavedProducts] = useState([]);
@@ -72,37 +68,22 @@ const SavedProducts = () => {
       <ProductInfo>
         Compatibility Score: {item.compatibility_score.toFixed(2)}
       </ProductInfo>
-      <TouchableOpacity
-        onPress={() => Linking.openURL(item.link)}
-        style={{
-          backgroundColor: "green",
-          padding: 10,
-          borderRadius: 5,
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "white", textAlign: "center" }}>View Product</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => removeProduct(item)}
-        style={{
-          backgroundColor: "#FF3B30",
-          padding: 10,
-          borderRadius: 5,
-          marginTop: 10,
-        }}
-      >
-        <Text style={{ color: "white", textAlign: "center" }}>Remove</Text>
-      </TouchableOpacity>
+      <ButtonRow>
+        <ProductButton onPress={() => Linking.openURL(item.link)}>
+          <ProductButtonText>View Product</ProductButtonText>
+        </ProductButton>
+        <RemoveButton onPress={() => removeProduct(item)}>
+          <RemoveButtonText>Remove</RemoveButtonText>
+        </RemoveButton>
+      </ButtonRow>
     </ProductCard>
   );
+  
 
   return (
     <SafeArea>
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", margin: 20, textAlign: 'center' }}>
-          Saved Products
-        </Text>
+        <PageTitle>Saved Products</PageTitle>
         {savedProducts.length > 0 ? (
           <FlatList
             data={savedProducts}
@@ -111,29 +92,27 @@ const SavedProducts = () => {
             contentContainerStyle={{ paddingHorizontal: 20 }}
           />
         ) : (
-          <Text style={{ margin: 20 }}>
-            You haven't saved any products yet.
-          </Text>
+          <EmptyText>You haven't saved any products yet.</EmptyText>
         )}
       </View>
       <BottomBar>
-      <BottomBarItem onPress={() => navigation.navigate("Home")}>
-        <StyledIonicons name="home-outline" />
-        <BottomBarText>HOME</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-        <StyledIonicons name="bookmark-outline" />
-        <BottomBarText>PRODUCTS</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("History")}>
-        <StyledIonicons name="stats-chart-outline" />
-        <BottomBarText>History</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-        <StyledIonicons name="person-outline" />
-        <BottomBarText>ACCOUNT</BottomBarText>
-      </BottomBarItem>
-    </BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
+          <StyledIonicons name="home-outline" />
+          <BottomBarText>HOME</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <StyledIonicons name="bookmark-outline" />
+          <BottomBarText>PRODUCTS</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
+          <StyledIonicons name="stats-chart-outline" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ACCOUNT</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
     </SafeArea>
   );
 };
