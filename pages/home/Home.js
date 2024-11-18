@@ -270,7 +270,7 @@ const [istaken, setIstaken] = useState(false);
         await setDoc(userDocRef, {
           scans: [scanData],
           totalScans: 1,
-          createdAt: new Date().toISOString(),
+          createdAt: new Date(),
           userId: user.uid,
           email: user.email,
         });
@@ -320,7 +320,7 @@ const [istaken, setIstaken] = useState(false);
         diagnosis: diagnosisResult,
         skinType: skinTypeResult,
         imageUri: image,
-        scanDate: "2024-11-18",
+        scanDate: scanDate,
         email:user.email,
         istaken: istaken
       });

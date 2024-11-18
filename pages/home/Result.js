@@ -29,75 +29,65 @@ const Result = () => {
   const route = useRoute();
   const { diagnosis, skinType, imageUri, scanDate, email, istaken } = route.params || {};
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-  const [isMoreThanOneDay, setIsMoreThanOneDay] = useState(false);
+  const [canInsertData, setCanInsertData] = useState(false);
 
-
-  //probleme de comparaison + scan date() dans home.js + axios err if no dates 
   const fetchDates = async () => {
     console.log("fetchDates called");
+
     if (!email) {
       console.error("Email is missing.");
       return;
     }
+
     try {
-      const response = await axios.post("https://rag-bl-6rgb.vercel.app/getdates", { "user_email": email });
+      const response = await axios.post("https://rag-bl-6rgb.vercel.app/getdates", { user_email: email });
       const scanDates = response.data.scan_dates || [];
       console.log("Fetched Dates:", scanDates);
-  
-      if (scanDates.length === 0) {
-        console.log("No previous scan dates found.");
-        setIsMoreThanOneDay(true); // Aucun scan antérieur, autoriser l'insertion.
-        return;
-      }
-  
+
       if (!scanDate) {
         console.error("scanDate is undefined.");
         return;
       }
-  
-      let moreThanOneDay = false;
-  
-      for (let i = 0; i < scanDates.length; i++) {
-        const pastDate = scanDates[i];
-        const diffTime = Math.abs(new Date(scanDate) - new Date(pastDate));
-        const diffDays = diffTime / (1000 * 60 * 60 * 24);
-  
-        console.log(`Comparing: scanDate=${scanDate}, pastDate=${pastDate}, Diff Days=${diffDays}`);
-        if (diffDays > 0) {
-          moreThanOneDay = true;
-          break;
-        }
-      }
-  
-      setIsMoreThanOneDay(moreThanOneDay);
+
+      const isSameDayScan = scanDates.some(date => {
+        const existingDate = new Date(date).toISOString().split("T")[0];
+        const currentScanDate = new Date(scanDate).toISOString().split("T")[0];
+        return existingDate === currentScanDate;
+      });
+
+      setCanInsertData(!isSameDayScan);
+      console.log("Setting canInsertData:", !isSameDayScan);
     } catch (error) {
-      console.error("Error fetching scan dates:", error);
+      console.log("Error fetching scan dates:", error);
     }
   };
-  
-  
 
   const insertData = async () => {
-    if (!istaken && !isMoreThanOneDay) {
-      console.log("Skipping data insertion: conditions not met (istaken=false and isMoreThanOneDay=false).");
+    if (!istaken) {
+      console.log("istaken:", istaken);
+      console.log("Skipping data insertion: the photo is not taken by the user.");
       return;
     }
+
+    if (!canInsertData) {
+      console.log("canInsertData:", canInsertData);
+      console.log("Skipping data insertion: conditions not met.");
+      return;
+    }
+
     try {
       const skinCondition =
         diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") || "";
       const skinTypeClass =
         skinType?.top?.toLowerCase().replace("-", "_") || "";
-  
-      console.log("Skin Condition:", skinCondition);
-      console.log("Skin Type Class:", skinTypeClass);
-  
+
       const fetchedProducts = await fetchProducts(skinCondition, skinTypeClass);
-  
+
       if (!fetchedProducts || fetchedProducts.length === 0) {
         console.error("No products fetched.");
         return;
       }
-  
+
       const data = {
         "user-email": email,
         "scan-date": scanDate,
@@ -127,22 +117,24 @@ const Result = () => {
           price: product.price || "No price available",
         })),
       };
+
       console.log("Data to be inserted:", data);
-  
-     // const response = await axios.post("https://rag-bl-6rgb.vercel.app/insert", data);
-     // console.log("Response from insertion:", response.data);
+
+      // Uncomment to actually insert the data
+       const response = await axios.post("https://rag-bl-6rgb.vercel.app/insert", data);
+       console.log("Response from insertion:", response.data);
+
     } catch (error) {
       console.error("Error fetching products or inserting data:", error);
     }
   };
-  
 
   useEffect(() => {
     const init = async () => {
       console.log("Initializing...");
       await fetchDates();
-      await insertData();
     };
+
     init();
 
     if (imageUri) {
@@ -157,6 +149,11 @@ const Result = () => {
     }
   }, [imageUri, diagnosis, skinType]);
 
+  useEffect(() => {
+    if (canInsertData) {
+      insertData();
+    }
+  }, [canInsertData]);
   const renderDiagnosisResult = () => {
     if (!diagnosis || !diagnosis.predictions || diagnosis.predictions.length === 0) {
       return <NoDataText>No detections found.</NoDataText>;
