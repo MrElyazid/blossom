@@ -347,9 +347,9 @@ const [istaken, setIstaken] = useState(false);
     }
   };
 
-  const handleChatbotButton = () => {
-    navigation.navigate("Chatbot"); // Navigate to the Chatbot page
-  };
+  // const handleChatbotButton = () => {
+  //   navigation.navigate("Chatbot"); // Navigate to the Chatbot page
+  // };
 
   return (
     <SafeArea style={{ backgroundColor: "#FFF4F4" }}>
@@ -384,9 +384,9 @@ const [istaken, setIstaken] = useState(false);
           <Button onPress={takePhoto}>
             <ButtonText>TAKE PHOTO</ButtonText>
           </Button>
-          <Button onPress={handleChatbotButton}>
+          {/* <Button onPress={handleChatbotButton}>
             <ButtonText>CHAT WITH BOT</ButtonText>
-          </Button>
+          </Button> */}
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
@@ -402,10 +402,14 @@ const [istaken, setIstaken] = useState(false);
           <StyledIonicons name="stats-chart-outline" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+        <BottomBarItem onPress={() => navigation.navigate("Chatbot")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ChatBot</BottomBarText>
+        </BottomBarItem>
+        {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <StyledIonicons name="person-outline" />
           <BottomBarText>ACCOUNT</BottomBarText>
-        </BottomBarItem>
+        </BottomBarItem> */}
       </BottomBar>
       <Toast />
     </SafeArea>

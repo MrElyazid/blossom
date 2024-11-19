@@ -5,6 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 import { Platform } from "react-native";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 
 // pages
 import Home from "./pages/home/Home";
@@ -19,6 +20,35 @@ import History from "./pages/userProfile/History";
 import SavedProducts from "./pages/userProfile/SavedProducts";
 
 const Stack = createStackNavigator();
+
+const toastConfig = {
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ backgroundColor: "black", borderLeftColor: "green" }}
+      text1Style={{
+        color: "white",
+        fontWeight: "bold",
+      }}
+      text2Style={{
+        color: "white",
+      }}
+    />
+  ),
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      style={{ backgroundColor: "black", borderLeftColor: "red" }}
+      text1Style={{
+        color: "white",
+        fontWeight: "bold",
+      }}
+      text2Style={{
+        color: "white",
+      }}
+    />
+  ),
+};
 
 const WelcomeScreen = ({ navigation }) => {
   return (
@@ -80,28 +110,31 @@ const App = () => {
   if (initializing) return null;
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
-          <>
-            <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Result" component={Result} />
-            <Stack.Screen name="Chatbot" component={Chatbot} />
-            <Stack.Screen name="Product" component={Product} />
-            <Stack.Screen name="SavedProducts" component={SavedProducts} />
-            <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="History" component={History} />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="LoginSignup" component={LoginSignup} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Signup" component={Signup} />
-          </>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {user ? (
+            <>
+              <Stack.Screen name="Welcome" component={WelcomeScreen} />
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Result" component={Result} />
+              <Stack.Screen name="Chatbot" component={Chatbot} />
+              <Stack.Screen name="Product" component={Product} />
+              <Stack.Screen name="SavedProducts" component={SavedProducts} />
+              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="History" component={History} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="LoginSignup" component={LoginSignup} />
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Signup" component={Signup} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Toast config={toastConfig} />
+    </>
   );
 };
 

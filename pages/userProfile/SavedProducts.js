@@ -25,6 +25,7 @@ import {
   ButtonRow,
 } from "../../styles/userProfile/SavedProductsStyled";
 import { SafeArea } from "../../styles/home/HomeStyled";
+import Toast from "react-native-toast-message";
 
 const SavedProducts = () => {
   const [savedProducts, setSavedProducts] = useState([]);
@@ -68,13 +69,25 @@ const SavedProducts = () => {
           savedProducts: arrayRemove(product),
         });
         setSavedProducts(savedProducts.filter((p) => p.id !== product.id));
-        Alert.alert("Success", "Product removed from saved list.");
-      } catch (error) {
-        console.error("Error removing product:", error);
-        Alert.alert("Error", "Failed to remove product. Please try again.");
-      }
+
+        Toast.show({
+        type: "success", // success type for successful removal
+        text1: "Product removed successfully!",
+      });
+    } catch (error) {
+      console.error("Error removing product:", error);
+      
+      // Show error toast
+      Toast.show({
+        type: "error", // error type for failure
+        text1: "Error removing product",
+        text2: "Please try again later.",
+      });
+
+      Alert.alert("Error", "Failed to remove product. Please try again.");
     }
-  };
+  }
+};
 
   const renderProduct = ({ item }) => (
     <ProductCard>
@@ -125,11 +138,16 @@ const SavedProducts = () => {
           <StyledIonicons name="stats-chart-outline" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+        <BottomBarItem onPress={() => navigation.navigate("Chatbot")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ChatBot</BottomBarText>
+        </BottomBarItem>
+        {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <StyledIonicons name="person-outline" />
           <BottomBarText>ACCOUNT</BottomBarText>
-        </BottomBarItem>
+        </BottomBarItem> */}
       </BottomBar>
+      <Toast />
     </SafeArea>
   );
 };

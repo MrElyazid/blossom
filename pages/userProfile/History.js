@@ -85,10 +85,14 @@ const History = () => {
           <StyledIonicons name="stats-chart-outline" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+        <BottomBarItem onPress={() => navigation.navigate("Chatbot")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ChatBot</BottomBarText>
+        </BottomBarItem>
+        {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <StyledIonicons name="person-outline" />
           <BottomBarText>ACCOUNT</BottomBarText>
-        </BottomBarItem>
+        </BottomBarItem> */}
       </BottomBar>
     </SafeArea>
   );

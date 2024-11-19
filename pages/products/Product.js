@@ -8,6 +8,7 @@ import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { SafeArea, ScrollContainer, ContentContainer } from "../../styles/home/HomeStyled";
 import { BackButton, BackButtonText, ProductCard, ProductName, ProductInfo, ProductLink, Text, SaveButton, SaveButtonText } from "../../styles/products/ProductStyled";
 import { fetchProducts } from "../utils/fetchProducts";  // Import the fetchProducts utility
+import Toast from "react-native-toast-message";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
@@ -50,10 +51,19 @@ const Product = () => {
         }
       } catch (error) {
         console.error("Error fetching products:", error);
-        Alert.alert(
-          "Error",
-          "Failed to fetch products. Please try again later."
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Error fetching products',
+          text2: 'Please try again later.',
+          style: {
+            backgroundColor: 'red',
+          },
+          textStyle: {
+            color: 'white',
+          },
+        });
+      
+        Alert.alert("Error", "Failed to fetch products. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -75,9 +85,20 @@ const Product = () => {
         savedProducts: arrayUnion(product),
       });
       setSavedProducts([...savedProducts, product.id]);
-      Alert.alert("Success", "Product saved successfully!");
+      Toast.show({
+        type: "success", // or "error"
+        text1: "Product saved successfully!",
+      });
     } catch (error) {
       console.error("Error saving product:", error);
+  //
+      // Show error toast
+      Toast.show({
+        type: "error",
+        text1: "Error saving product",
+        text2: "Please try again later.",
+      });
+  
       Alert.alert("Error", "Failed to save product. Please try again.");
     }
   };
@@ -137,11 +158,16 @@ const Product = () => {
           <StyledIonicons name="stats-chart-outline" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
-        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+        <BottomBarItem onPress={() => navigation.navigate("Chatbot")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ChatBot</BottomBarText>
+        </BottomBarItem>
+        {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <StyledIonicons name="person-outline" />
           <BottomBarText>ACCOUNT</BottomBarText>
-        </BottomBarItem>
+        </BottomBarItem> */}
       </BottomBar>
+      <Toast />
     </SafeArea>
   );
 };
