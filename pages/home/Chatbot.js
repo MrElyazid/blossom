@@ -10,9 +10,10 @@ import { Ionicons } from "@expo/vector-icons";
 import {
   BottomBar,
   BottomBarItem,
-  BottomBarText
+  BottomBarText,
+  StyledIonicons
 } from "../../styles/bottomBarStyled";
-
+import CustomButton from "../../styles/CustomButton";
 const Chatbot = () => {
   const navigation = useNavigation();
   const [question, setQuestion] = useState("");
@@ -105,7 +106,7 @@ const Chatbot = () => {
   }, [responses]); // Trigger scroll when responses change
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 , backgroundColor: "#FDE2E2"}}>
       <KeyboardAvoidingView 
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -118,7 +119,7 @@ const Chatbot = () => {
         >
           <View style={{ flex: 1 }}>
             {/* Custom Navigation Bar */}
-            <View style={{ height: 60, backgroundColor: "#6200ea",borderRadius: 15, justifyContent: 'center', alignItems: 'flex-start', paddingLeft: 15 ,marginBottom: 10}}>
+            <View style={{ height: 60, backgroundColor: "#F38181",borderRadius: 15, justifyContent: 'center', alignItems: 'center',marginBottom: 10}}>
               <Text style={{ color: "#fff", fontSize: 20 }}>Chatbot</Text>
             </View>
 
@@ -129,7 +130,7 @@ const Chatbot = () => {
                   <View
                     style={{
                       maxWidth: "80%",
-                      backgroundColor: "#6200ea", // User message background color
+                      backgroundColor: "#F8B4C3", // User message background color
                       padding: 10,
                       borderRadius: 15,
                       marginBottom: 5,
@@ -137,22 +138,23 @@ const Chatbot = () => {
                       marginRight: 10,
                     }}
                   >
-                    <Text style={{ color: "#fff" }}>{item.question}</Text>
+                    <Text style={{ color: "black" }}>{item.question}</Text>
                   </View>
 
                   {/* Bot response bubble */}
                   <View
                     style={{
                       maxWidth: "80%",
-                      backgroundColor: "#e0e0e0", // Bot message background color
+                      backgroundColor: "#F4F4F4", // Bot message background color
                       padding: 10,
                       borderRadius: 15,
                       marginBottom: 5,
                       alignSelf: "flex-start", // Align bot messages to the left
                       marginLeft: 10,
+                      color: "#2C2C2C"
                     }}
                   >
-                    <Text>{item.answer}</Text>
+                    <Text style={{ color: "#2C2C2C" }}>{item.answer}</Text>
                   </View>
                 </View>
               ))}
@@ -167,7 +169,7 @@ const Chatbot = () => {
             onPress={() => setShowDates(!showDates)} // Toggle visibility of the dates list
             style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}
           >
-            <Ionicons name={showDates ? "chevron-up" : "chevron-down"} size={24} color="#6200ea" />
+            <Ionicons name={showDates ? "chevron-up" : "chevron-down"} size={24} color="#F38181" />
             <Text style={{ marginLeft: 10 }}>Select Scan Dates</Text>
           </TouchableOpacity>
 
@@ -197,33 +199,34 @@ const Chatbot = () => {
             onChangeText={setQuestion}
             style={{
               borderWidth: 1,
-              borderColor: "#ccc",
+              borderColor: "#F4C2C2",
               padding: 10,
               marginBottom: 10,
               borderRadius: 8,
             }}
           />
-          <Button title="Send" onPress={handleAskQuestion} />
+         <CustomButton title="Send" onPress={handleAskQuestion} />
+
         </View>
       </KeyboardAvoidingView>
-
+     
       {/* Fixed Bottom Navigation Bar */}
-      <BottomBar style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+      <BottomBar  style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
         <BottomBarItem onPress={() => navigation.navigate("Home")}>
-          <Ionicons name="home-outline" size={24} color="#333" />
-          <BottomBarText>Home</BottomBarText>
+          <StyledIonicons name="home-outline" />
+          <BottomBarText>HOME</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-          <Ionicons name="bookmark-outline" size={24} color="#333" />
-          <BottomBarText>Saved</BottomBarText>
+          <StyledIonicons name="bookmark-outline" />
+          <BottomBarText>PRODUCTS</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("History")}>
-          <Ionicons name="stats-chart-outline" size={24} color="#333" />
+          <StyledIonicons name="stats-chart-outline" />
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-          <Ionicons name="person-outline" size={24} color="#333" />
-          <BottomBarText>Profile</BottomBarText>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ACCOUNT</BottomBarText>
         </BottomBarItem>
       </BottomBar>
     </SafeAreaView>

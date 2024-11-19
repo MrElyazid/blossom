@@ -30,8 +30,8 @@ export const Logo = styled.Image`
 `;
 
 export const Text = styled.Text`
-  font-size: 22px;
-  color: #000000;
+  font-size: 24px;
+  color: #2C2C2C;
   margin-bottom: 20px;
   text-align: center;
   font-weight: 600;
@@ -39,7 +39,7 @@ export const Text = styled.Text`
 `;
 
 export const Button = styled.TouchableOpacity`
-  background-color: #E9AFB9;
+  background-color: #F7A1A1;
   padding-vertical: 10px;
   min-width: 200px;  
   max-width: 300px;  
@@ -56,7 +56,7 @@ export const Button = styled.TouchableOpacity`
 
 
 export const ButtonText = styled.Text`
-  color: white;
+  color: #ffffff;
   font-size: 18px;
   font-weight: bold;
   font-family: ${Platform.OS === "ios" ? "American Typewriter" : "serif"};

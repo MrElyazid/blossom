@@ -1,4 +1,3 @@
-// pages/userProfile/Profile.js
 import React, { useState } from "react";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,9 +8,6 @@ import {
   SafeArea,
   ScrollContainer,
   ContentContainer,
-  // BottomBar,
-  // BottomBarItem,
-  // BottomBarText,
 } from "../../styles/home/HomeStyled";
 import {
   Title,
@@ -19,6 +15,8 @@ import {
   LogoutButton,
   LogoutButtonText,
   InfoText,
+  ProfileCard,
+  ProfileDetails,
 } from "../../styles/userProfile/ProfileStyled";
 
 const Profile = () => {
@@ -60,35 +58,39 @@ const Profile = () => {
   };
 
   return (
-    <SafeArea>
+    <SafeArea style={{ backgroundColor: "#FFF4F4" }}>
       <ScrollContainer>
         <ContentContainer>
-          <Title>Profile</Title>
-          <Email>User Email: {userEmail}</Email>
-          <InfoText>Total Scans: {totalScans}</InfoText>
-          <LogoutButton onPress={handleLogout}>
-            <LogoutButtonText>Log Out</LogoutButtonText>
-          </LogoutButton>
+          <ProfileCard>
+            <Title>Profile</Title>
+            <ProfileDetails>
+              <Email>User Email: {userEmail}</Email>
+              <InfoText>Total Scans: {totalScans}</InfoText>
+            </ProfileDetails>
+            <LogoutButton onPress={handleLogout}>
+              <LogoutButtonText>Log Out</LogoutButtonText>
+            </LogoutButton>
+          </ProfileCard>
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
-      <BottomBarItem onPress={() => navigation.navigate("Home")}>
-        <StyledIonicons name="home-outline" />
-        <BottomBarText>HOME</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-        <StyledIonicons name="bookmark-outline" />
-        <BottomBarText>PRODUCTS</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("History")}>
-        <StyledIonicons name="stats-chart-outline" />
-        <BottomBarText>History</BottomBarText>
-      </BottomBarItem>
-      <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-        <StyledIonicons name="person-outline" />
-        <BottomBarText>ACCOUNT</BottomBarText>
-      </BottomBarItem>
-    </BottomBar>
+        <BottomBarItem onPress={() => navigation.navigate("Home")}>
+          <StyledIonicons name="home-outline" />
+          <BottomBarText>HOME</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+          <StyledIonicons name="bookmark-outline" />
+          <BottomBarText>PRODUCTS</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
+          <StyledIonicons name="stats-chart-outline" />
+          <BottomBarText>History</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+          <StyledIonicons name="person-outline" />
+          <BottomBarText>ACCOUNT</BottomBarText>
+        </BottomBarItem>
+      </BottomBar>
     </SafeArea>
   );
 };

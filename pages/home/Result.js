@@ -254,12 +254,16 @@ const Result = () => {
           <BottomBarText>HOME</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-          <StyledIonicons name="save-outline" />
-          <BottomBarText>FAVORITES</BottomBarText>
+          <StyledIonicons name="bookmark-outline" />
+          <BottomBarText>PRODUCTS</BottomBarText>
+        </BottomBarItem>
+        <BottomBarItem onPress={() => navigation.navigate("History")}>
+          <StyledIonicons name="stats-chart-outline" />
+          <BottomBarText>History</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <StyledIonicons name="person-outline" />
-          <BottomBarText>PROFILE</BottomBarText>
+          <BottomBarText>ACCOUNT</BottomBarText>
         </BottomBarItem>
       </BottomBar>
     </SafeArea>

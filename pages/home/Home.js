@@ -41,7 +41,7 @@ import {
   ButtonTextAnalyse,
 } from "../../styles/home/HomeStyled";
 import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
-
+import Toast from "react-native-toast-message";
 const Home = () => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,8 +74,16 @@ const [istaken, setIstaken] = useState(false);
         to: newPath,
       });
       setImage(newPath);
-      Alert.alert("Success", "Image saved successfully");
-    } catch (error) {
+      Toast.show({
+        type: 'success',
+        text1: 'Image saved successfully',
+        style: {
+          backgroundColor: 'black',  // Dark background for error toast
+        },
+        textStyle: {
+          color: 'white', // White text on the dark background
+        },
+      });    } catch (error) {
       console.error(error);
       Alert.alert("Error", "Failed to save image");
     }
@@ -281,10 +289,20 @@ const [istaken, setIstaken] = useState(false);
           totalScans: increment(1),
         });
       }
-
+      Toast.show({
+        type: 'success',
+        text1: 'Scan data saved successfully',
+        style: {
+          backgroundColor: 'black',  
+        },
+        textStyle: {
+          color: 'white', 
+        },
+      }); 
       console.log("Scan data saved successfully");
     } catch (error) {
       console.error("Error saving scan data:", error);
+
       Alert.alert("Error", "Failed to save scan data");
     }
   };
@@ -334,7 +352,7 @@ const [istaken, setIstaken] = useState(false);
   };
 
   return (
-    <SafeArea>
+    <SafeArea style={{ backgroundColor: "#FFF4F4" }}>
       <ScrollContainer>
         <ContentContainer>
           <Logo source={BlossomLogo} />
@@ -389,6 +407,7 @@ const [istaken, setIstaken] = useState(false);
           <BottomBarText>ACCOUNT</BottomBarText>
         </BottomBarItem>
       </BottomBar>
+      <Toast />
     </SafeArea>
   );
 };
