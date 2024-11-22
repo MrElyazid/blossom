@@ -22,7 +22,7 @@ export const ContainerH = styled.View`
   border-width: 1px;
   border-color: #E9AFB9;
   padding-vertical: 10px;
-  width: ${width * 0.83}px;
+  width: ${width * 0.86}px;
   align-self: center;
 `;
 
