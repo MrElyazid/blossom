@@ -377,11 +377,11 @@ const Result = () => {
       <BottomBar>
         <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <StyledIonicons name="home-outline" />
-          <BottomBarText>HOME</BottomBarText>
+          <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
           <StyledIonicons name="bookmark-outline" />
-          <BottomBarText>PRODUCTS</BottomBarText>
+          <BottomBarText>Products</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("History")}>
           <StyledIonicons name="stats-chart-outline" />

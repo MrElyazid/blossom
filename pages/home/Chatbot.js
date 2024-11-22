@@ -207,11 +207,11 @@ const Chatbot = () => {
       <BottomBar style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
         <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <StyledIonicons name="home-outline" />
-          <BottomBarText>HOME</BottomBarText>
+          <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
           <StyledIonicons name="bookmark-outline" />
-          <BottomBarText>PRODUCTS</BottomBarText>
+          <BottomBarText>Products</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("History")}>
           <StyledIonicons name="stats-chart-outline" />
@@ -219,7 +219,7 @@ const Chatbot = () => {
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("Profile")}>
           <StyledIonicons name="person-outline" />
-          <BottomBarText>ACCOUNT</BottomBarText>
+          <BottomBarText>Account</BottomBarText>
         </BottomBarItem>
       </BottomBar>
     </SafeAreaView>

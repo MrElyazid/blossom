@@ -155,7 +155,7 @@ const [istaken, setIstaken] = useState(false);
       // Perform the POST request with base64 image data
       const response = await axios({
         method: "POST",
-        url: "https://detect.roboflow.com/skin-disease-detection-vtmmm/3",
+        url: "https://detect.roboflow.com/skin-disease-detection-vtmmm/4",
         params: {
           api_key: "cQ1a6z6OVW1zSOmYdupk",
           include_coordinates: true,
@@ -392,11 +392,11 @@ const [istaken, setIstaken] = useState(false);
       <BottomBar>
         <BottomBarItem onPress={() => navigation.navigate("Home")}>
           <StyledIonicons name="home-outline" />
-          <BottomBarText>HOME</BottomBarText>
+          <BottomBarText>Home</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
           <StyledIonicons name="bookmark-outline" />
-          <BottomBarText>PRODUCTS</BottomBarText>
+          <BottomBarText>Products</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("History")}>
           <StyledIonicons name="stats-chart-outline" />
