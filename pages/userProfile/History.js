@@ -67,6 +67,7 @@ const History = () => {
             data={scanHistory.sort((a, b) => new Date(b.date) - new Date(a.date))}
             renderItem={renderScanItem}
             keyExtractor={(item, index) => index.toString()}
+            contentContainerStyle={{ paddingBottom: 100 }}
           />
         ) : (
           <Text>No scan history available.</Text>

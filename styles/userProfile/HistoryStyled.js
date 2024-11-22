@@ -1,5 +1,7 @@
 import styled from "styled-components/native";
-import { Platform } from "react-native";
+import { Dimensions, Platform } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 export const Title = styled.Text`
   font-size: 24px;
@@ -20,7 +22,8 @@ export const ContainerH = styled.View`
   border-width: 1px;
   border-color: #E9AFB9;
   padding-vertical: 10px;
-  width: 370;
+  width: ${width * 0.9}px;
+  align-self: center;
 `;
 
 export const ContentWrapper = styled.View`
