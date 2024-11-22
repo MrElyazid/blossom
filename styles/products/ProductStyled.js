@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
-import { ScrollView, SafeAreaView } from "react-native";
-import { Platform } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import { Dimensions, Platform } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 export const BackButton = styled.TouchableOpacity`
   align-self: flex-start;
@@ -27,8 +27,9 @@ export const ProductCard = styled.View`
   elevation: 3;
   border-width: 1px;
   border-color: #E9AFB9;
-  padding-vertical: 10px;
-  width: 370;
+  padding-vertical: 35px;
+  width: ${width * 0.9}px;
+  align-self: center;
 `;
 
 export const ProductName = styled.Text`
