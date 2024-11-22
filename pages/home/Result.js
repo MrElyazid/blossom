@@ -236,50 +236,65 @@ const Result = () => {
       imageDimensions.height === 0
     )
       return null;
-
+  
     return (
       <View style={{ position: "relative" }}>
         <Svg
+          viewBox={`0 0 ${imageDimensions.width} ${imageDimensions.height}`}
           width={imageDimensions.width}
           height={imageDimensions.height}
           style={{ position: "absolute" }}
         >
+          {/* Dessin des bounding boxes */}
           {diagnosis.predictions.map((prediction, index) => {
             const { x, y, width, height, class: diseaseClass } = prediction;
             const boxColor =
-              diseaseColors[diseaseClass.toLowerCase()] ||
-              diseaseColors.default;
-
+              diseaseColors[diseaseClass.toLowerCase()] || diseaseColors.default;
+  
             return (
-              <Rect
-                key={index}
-                x={x}
-                y={y}
-                width={width}
-                height={height}
-                stroke={boxColor} // Outline color
-                strokeWidth={2}
-                fill="none" // Transparent fill
-              />
+              <React.Fragment key={`box-${index}`}>
+                <Rect
+                  x={x}
+                  y={y}
+                  width={width}
+                  height={height}
+                  stroke={boxColor}
+                  strokeWidth={2}
+                  fill="none"
+                />
+              </React.Fragment>
+            );
+          })}
+  
+          {/* Dessin des étiquettes */}
+          {diagnosis.predictions.map((prediction, index) => {
+            const { x, y, class: diseaseClass } = prediction;
+            const label = diseaseClass.charAt(0).toUpperCase() + diseaseClass.slice(1);
+  
+            return (
+              <React.Fragment key={`label-${index}`}>
+                {/* Fond de l'étiquette */}
+                <Rect
+                  x={x}
+                  y={y - 20}
+                  width={label.length * 8}
+                  height={16}
+                  fill="rgba(255, 255, 255, 0.7)"
+                  rx={4}
+                />
+                {/* Texte de l'étiquette */}
+                <SvgText
+                  x={x + 4}
+                  y={y - 8}
+                  fontSize="12"
+                  fill="black"
+                >
+                  {label}
+                </SvgText>
+              </React.Fragment>
             );
           })}
         </Svg>
-        {diagnosis.predictions.map((prediction, index) => {
-          const { x, y, class: diseaseClass } = prediction;
-
-          return (
-            <SvgText
-              key={`label-${index}`}
-              x={x}
-              y={y - 10} // Slightly above the box
-              fontSize="12"
-              fill="black"
-              background="rgba(255, 255, 255, 0.7)"
-            >
-              {diseaseClass.charAt(0).toUpperCase() + diseaseClass.slice(1)}
-            </SvgText>
-          );
-        })}
       </View>
     );
   };
