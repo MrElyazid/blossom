@@ -11,6 +11,7 @@ import { Alert } from "react-native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import * as ImageManipulator from 'expo-image-manipulator';
 import BlossomLogo from "../../assets/BlossomLogo.png";
 import { db, auth } from "../../firebaseConfig";
 import {
@@ -32,9 +33,6 @@ import {
   ImageContainer,
   PreviewImage,
   Loader,
-  // BottomBar,
-  // BottomBarItem,
-  // BottomBarText,
   ProgressBar,
   ProgressBarFill,
   AnalyseButton,
@@ -42,6 +40,9 @@ import {
 } from "../../styles/home/HomeStyled";
 import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 import Toast from "react-native-toast-message";
+
+const NORMALIZED_IMAGE_SIZE = 500; // Set the desired width and height for normalized images
+
 const Home = () => {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +52,8 @@ const Home = () => {
   const [skinTypeResult, setSkinTypeResult] = useState(null);
   const navigation = useNavigation();
   const [scanDate, setScanDate] = useState(null);
-const [istaken, setIstaken] = useState(false);
+  const [istaken, setIstaken] = useState(false);
+
   useFocusEffect(
     React.useCallback(() => {
       setImage(null);
@@ -65,35 +67,53 @@ const [istaken, setIstaken] = useState(false);
     }, [])
   );
 
-  const saveImage = async (uri) => {
-    const fileName = uri.split("/").pop();
-    const newPath = FileSystem.documentDirectory + fileName;
+  const normalizeImage = async (uri) => {
     try {
+      const result = await ImageManipulator.manipulateAsync(
+        uri,
+        [
+          { resize: { width: NORMALIZED_IMAGE_SIZE, height: NORMALIZED_IMAGE_SIZE } },
+        ],
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      return result.uri;
+    } catch (error) {
+      console.error("Error normalizing image:", error);
+      throw error;
+    }
+  };
+
+  const saveImage = async (uri) => {
+    try {
+      const normalizedUri = await normalizeImage(uri);
+      const fileName = normalizedUri.split("/").pop();
+      const newPath = FileSystem.documentDirectory + fileName;
       await FileSystem.moveAsync({
-        from: uri,
+        from: normalizedUri,
         to: newPath,
       });
       setImage(newPath);
       Toast.show({
         type: 'success',
-        text1: 'Image saved successfully',
+        text1: 'Image saved and normalized successfully',
         style: {
-          backgroundColor: 'black',  // Dark background for error toast
+          backgroundColor: 'black',
         },
         textStyle: {
-          color: 'white', // White text on the dark background
+          color: 'white',
         },
-      });    } catch (error) {
+      });
+    } catch (error) {
       console.error(error);
-      Alert.alert("Error", "Failed to save image");
+      Alert.alert("Error", "Failed to save and normalize image");
     }
   };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      aspect: [4, 3],
+      allowsEditing: true,
+      aspect: [1, 1],
       quality: 1,
     });
     if (!result.canceled) {
@@ -144,7 +164,6 @@ const [istaken, setIstaken] = useState(false);
     return response.data.secure_url; // Return the URL of the uploaded image
   };
 
-
   const uploadImageAndFetchDiagnosis = async (imageUri) => {
     try {
       // Convert the image to a base64 encoded string
@@ -180,43 +199,6 @@ const [istaken, setIstaken] = useState(false);
       throw error;
     }
   };
-
-
-
-  // const uploadImageAndFetchDiagnosis = async (imageUri) => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("image", {
-  //       uri: imageUri,
-  //       type: "image/jpeg",
-  //       name: "image.jpg",
-  //     });
-
-  //     const response = await axios.post(
-  //       "https://04bd-105-74-67-132.ngrok-free.app/classify",
-  //       formData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //         },
-  //         onUploadProgress: (progressEvent) => {
-  //           const percentCompleted =
-  //             Math.round((progressEvent.loaded * 100) / progressEvent.total) /
-  //             2;
-  //           setProgress((prevProgress) =>
-  //             Math.max(prevProgress, percentCompleted)
-  //           );
-  //         },
-  //       }
-  //     );
-
-  //     console.log("Diagnosis Response: ", response.data);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.log("Error fetching data: ", error);
-  //     throw error;
-  //   }
-  // };
 
   const fetchSkinTypeAnalysis = async (imageUri) => {
     try {
@@ -347,10 +329,6 @@ const [istaken, setIstaken] = useState(false);
     }
   };
 
-  // const handleChatbotButton = () => {
-  //   navigation.navigate("Chatbot"); // Navigate to the Chatbot page
-  // };
-
   return (
     <SafeArea style={{ backgroundColor: "#FFF4F4" }}>
       <ScrollContainer>
@@ -384,9 +362,6 @@ const [istaken, setIstaken] = useState(false);
           <Button onPress={takePhoto}>
             <ButtonText>TAKE PHOTO</ButtonText>
           </Button>
-          {/* <Button onPress={handleChatbotButton}>
-            <ButtonText>CHAT WITH BOT</ButtonText>
-          </Button> */}
         </ContentContainer>
       </ScrollContainer>
       <BottomBar>
@@ -406,15 +381,10 @@ const [istaken, setIstaken] = useState(false);
           <StyledIonicons name="chatbox-ellipses-outline" />
           <BottomBarText>ChatBot</BottomBarText>
         </BottomBarItem>
-        {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-          <StyledIonicons name="person-outline" />
-          <BottomBarText>ACCOUNT</BottomBarText>
-        </BottomBarItem> */}
       </BottomBar>
       <Toast />
     </SafeArea>
   );
 };
-
 
 export default Home;

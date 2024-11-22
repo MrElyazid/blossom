@@ -8,10 +8,10 @@ import {
   Platform,
   KeyboardAvoidingView,
   Keyboard,
-  TouchableWithoutFeedback,
-  SafeAreaView,
   TouchableOpacity,
+  SafeAreaView,
   Switch,
+  StyleSheet,
 } from "react-native";
 import { auth } from "../../firebaseConfig";
 import axios from "axios";
@@ -134,149 +134,186 @@ const Chatbot = () => {
   }, [responses]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FDE2E2" }}>
+    <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.keyboardAvoidingView}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ flex: 1 }}>
-            <ScrollView
-              ref={scrollViewRef}
-              contentContainerStyle={{ padding: 20, paddingBottom: 80 }}
-              keyboardShouldPersistTaps="handled"
-            >
-              <View
-                style={{
-                  height: 60,
-                  backgroundColor: "#F38181",
-                  borderRadius: 15,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: 10,
-                  marginTop: 15,
-                }}
-              >
-                <Text style={{ color: "#fff", fontSize: 20 }}>Chatbot</Text>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Chatbot</Text>
+        </View>
+
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          {responses.map((item, index) => (
+            <View key={index} style={styles.messageContainer}>
+              <View style={styles.userMessage}>
+                <Text>{item.question}</Text>
               </View>
-
-              {responses.map((item, index) => (
-                <View key={index} style={{ marginBottom: 10 }}>
-                  <View
-                    style={{
-                      alignSelf: "flex-end",
-                      backgroundColor: "#F8B4C3",
-                      padding: 10,
-                      borderRadius: 8,
-                      marginBottom: 5,
-                    }}
-                  >
-                    <Text>{item.question}</Text>
-                  </View>
-
-                  <View
-                    style={{
-                      maxWidth: "80%",
-                      backgroundColor: "#F4F4F4",
-                      padding: 10,
-                      borderRadius: 15,
-                      marginBottom: 5,
-                      alignSelf: "flex-start",
-                    }}
-                  >
-                    <Text style={{ color: "#2C2C2C" }}>{item.answer}</Text>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-
-            <View
-              style={{
-                paddingHorizontal: 20,
-                paddingBottom: keyboardVisible ? 10 : 100,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => setShowDates(!showDates)}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 10,
-                }}
-              >
-                <Ionicons
-                  name={showDates ? "chevron-up" : "chevron-down"}
-                  size={24}
-                  color="#F38181"
-                />
-                <Text style={{ marginLeft: 10 }}>Select Scan Dates</Text>
-              </TouchableOpacity>
-
-              {showDates && (
-                <View>
-                  {loadingDates ? (
-                    <ActivityIndicator size="small" color="#0000ff" />
-                  ) : (
-                    dates.map((date, index) => (
-                      <View
-                        key={index}
-                        style={{
-                          flexDirection: "row",
-                          alignItems: "center",
-                          marginBottom: 10,
-                        }}
-                      >
-                        <Switch
-                          value={selectedDates.includes(date)}
-                          onValueChange={() => handleSelectDate(date)}
-                        />
-                        <Text>{date}</Text>
-                      </View>
-                    ))
-                  )}
-                </View>
-              )}
-
-              <TextInput
-                placeholder="Ask your question..."
-                value={question}
-                onChangeText={setQuestion}
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#F4C2C2",
-                  padding: 10,
-                  marginBottom: 10,
-                  borderRadius: 8,
-                }}
-              />
-              <CustomButton title="Send" onPress={handleAskQuestion} />
+              <View style={styles.botMessage}>
+                <Text style={styles.botMessageText}>{item.answer}</Text>
+              </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
+          ))}
+        </ScrollView>
 
-        {!keyboardVisible && (
-          <BottomBar style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
-            <BottomBarItem onPress={() => navigation.navigate("Home")}>
-              <StyledIonicons name="home-outline" />
-              <BottomBarText>Home</BottomBarText>
-            </BottomBarItem>
-            <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
-              <StyledIonicons name="bookmark-outline" />
-              <BottomBarText>Products</BottomBarText>
-            </BottomBarItem>
-            <BottomBarItem onPress={() => navigation.navigate("History")}>
-              <StyledIonicons name="stats-chart-outline" />
-              <BottomBarText>History</BottomBarText>
-            </BottomBarItem>
-            <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-              <StyledIonicons name="person-outline" />
-              <BottomBarText>Account</BottomBarText>
-            </BottomBarItem>
-          </BottomBar>
-        )}
+        <View style={styles.inputContainer}>
+          <TouchableOpacity
+            onPress={() => setShowDates(!showDates)}
+            style={styles.dateSelector}
+          >
+            <Ionicons
+              name={showDates ? "chevron-up" : "chevron-down"}
+              size={24}
+              color="#F38181"
+            />
+            <Text style={styles.dateSelectorText}>Select Scan Dates</Text>
+          </TouchableOpacity>
+
+          {showDates && (
+            <View style={styles.dateList}>
+              {loadingDates ? (
+                <ActivityIndicator size="small" color="#0000ff" />
+              ) : (
+                dates.map((date, index) => (
+                  <View key={index} style={styles.dateItem}>
+                    <Switch
+                      value={selectedDates.includes(date)}
+                      onValueChange={() => handleSelectDate(date)}
+                    />
+                    <Text style={styles.dateItemText}>{date}</Text>
+                  </View>
+                ))
+              )}
+            </View>
+          )}
+
+          <TextInput
+            placeholder="Ask your question..."
+            value={question}
+            onChangeText={setQuestion}
+            style={styles.textInput}
+          />
+          <CustomButton title="Send" onPress={handleAskQuestion} />
+        </View>
       </KeyboardAvoidingView>
+
+      {!keyboardVisible && (
+        <BottomBar style={styles.bottomBar}>
+          <BottomBarItem onPress={() => navigation.navigate("Home")}>
+            <StyledIonicons name="home-outline" />
+            <BottomBarText>Home</BottomBarText>
+          </BottomBarItem>
+          <BottomBarItem onPress={() => navigation.navigate("SavedProducts")}>
+            <StyledIonicons name="bookmark-outline" />
+            <BottomBarText>Products</BottomBarText>
+          </BottomBarItem>
+          <BottomBarItem onPress={() => navigation.navigate("History")}>
+            <StyledIonicons name="stats-chart-outline" />
+            <BottomBarText>History</BottomBarText>
+          </BottomBarItem>
+          <BottomBarItem onPress={() => navigation.navigate("Profile")}>
+            <StyledIonicons name="person-outline" />
+            <BottomBarText>Account</BottomBarText>
+          </BottomBarItem>
+        </BottomBar>
+      )}
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FDE2E2",
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  header: {
+    height: 60,
+    backgroundColor: "#F38181",
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  headerText: {
+    color: "#fff",
+    fontSize: 20,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    padding: 20,
+    paddingBottom: 20,
+  },
+  messageContainer: {
+    marginBottom: 10,
+  },
+  userMessage: {
+    alignSelf: "flex-end",
+    backgroundColor: "#F8B4C3",
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 5,
+  },
+  botMessage: {
+    maxWidth: "80%",
+    backgroundColor: "#F4F4F4",
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 5,
+    alignSelf: "flex-start",
+  },
+  botMessageText: {
+    color: "#2C2C2C",
+  },
+  inputContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: "#FDE2E2",
+  },
+  dateSelector: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  dateSelectorText: {
+    marginLeft: 10,
+  },
+  dateList: {
+    marginBottom: 10,
+  },
+  dateItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  dateItemText: {
+    marginLeft: 10,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: "#F4C2C2",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    backgroundColor: "#FFFFFF",
+  },
+  bottomBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+});
 
 export default Chatbot;
