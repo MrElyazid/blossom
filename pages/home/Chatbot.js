@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 20,
-    marginTop: 15,
+    marginTop: 45,
     marginBottom: 10,
   },
   headerText: {

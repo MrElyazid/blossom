@@ -59,7 +59,7 @@ const History = () => {
   return (
     <SafeArea style={{ backgroundColor: "#FFF4F4" }}>
       <View style={{ flex: 1, padding: 20 }}>
-        <Title>SCANNING HISTORY</Title>
+        <Title>Scanning History</Title>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : scanHistory.length > 0 ? (

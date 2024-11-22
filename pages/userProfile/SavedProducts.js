@@ -110,7 +110,7 @@ const SavedProducts = () => {
 
   return (
     <SafeArea style={{ backgroundColor: "#FFF4F4" }}>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, padding: 20 }}>
         <PageTitle>Saved Products</PageTitle>
         {loading ? ( // Show loading spinner while fetching data
           <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 20 }} />
@@ -119,7 +119,7 @@ const SavedProducts = () => {
             data={savedProducts}
             renderItem={renderProduct}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingHorizontal: 20 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}
           />
         ) : (
           <EmptyText>You haven't saved any products yet.</EmptyText>
