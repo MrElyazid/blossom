@@ -139,7 +139,7 @@ const SavedProducts = () => {
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("Chatbot")}>
-          <StyledIonicons name="person-outline" />
+          <StyledIonicons name="chatbox-ellipses-outline" />
           <BottomBarText>ChatBot</BottomBarText>
         </BottomBarItem>
         {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>

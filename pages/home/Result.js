@@ -3,8 +3,15 @@ import { View, Image, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Svg, { Rect } from "react-native-svg";
+import { Text as SvgText } from "react-native-svg";
 import axios from "axios";
-import { StyledIonicons, BottomBar, BottomBarItem, BottomBarText } from "../../styles/bottomBarStyled";
+import { Text } from "../../styles/home/HomeStyled";
+import {
+  StyledIonicons,
+  BottomBar,
+  BottomBarItem,
+  BottomBarText,
+} from "../../styles/bottomBarStyled";
 import {
   SafeArea,
   ScrollContainer,
@@ -27,8 +34,12 @@ import { fetchProducts } from "../utils/fetchProducts"; // Reusable function
 const Result = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { diagnosis, skinType, imageUri, scanDate, email, istaken } = route.params || {};
-  const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
+  const { diagnosis, skinType, imageUri, scanDate, email, istaken } =
+    route.params || {};
+  const [imageDimensions, setImageDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
   const [canInsertData, setCanInsertData] = useState(false);
 
   const fetchDates = async () => {
@@ -40,7 +51,10 @@ const Result = () => {
     }
 
     try {
-      const response = await axios.post("https://rag-bl-6rgb.vercel.app/getdates", { user_email: email });
+      const response = await axios.post(
+        "https://rag-bl-6rgb.vercel.app/getdates",
+        { user_email: email }
+      );
       const scanDates = response.data.scan_dates || [];
       console.log("Fetched Dates:", scanDates);
 
@@ -49,7 +63,7 @@ const Result = () => {
         return;
       }
 
-      const isSameDayScan = scanDates.some(date => {
+      const isSameDayScan = scanDates.some((date) => {
         const existingDate = new Date(date).toISOString().split("T")[0];
         const currentScanDate = new Date(scanDate).toISOString().split("T")[0];
         return existingDate === currentScanDate;
@@ -65,7 +79,9 @@ const Result = () => {
   const insertData = async () => {
     if (!istaken) {
       console.log("istaken:", istaken);
-      console.log("Skipping data insertion: the photo is not taken by the user.");
+      console.log(
+        "Skipping data insertion: the photo is not taken by the user."
+      );
       return;
     }
 
@@ -77,7 +93,8 @@ const Result = () => {
 
     try {
       const skinCondition =
-        diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") || "";
+        diagnosis?.predictions?.[0]?.class?.toLowerCase().replace(" ", "_") ||
+        "";
       const skinTypeClass =
         skinType?.top?.toLowerCase().replace("-", "_") || "";
 
@@ -92,8 +109,14 @@ const Result = () => {
         "user-email": email,
         "scan-date": scanDate,
         "user-skin-type": skinType?.top || "Unknown",
-        "user-skin-diseases": [...new Set(diagnosis?.predictions?.map(prediction => prediction.class) || ["Unknown"])],
-        "products": fetchedProducts.map((product) => ({
+        "user-skin-diseases": [
+          ...new Set(
+            diagnosis?.predictions?.map((prediction) => prediction.class) || [
+              "Unknown",
+            ]
+          ),
+        ],
+        products: fetchedProducts.map((product) => ({
           name: product.name || "Unknown",
           description: product.description || "No description available",
           category: product.category || "Uncategorized",
@@ -121,9 +144,11 @@ const Result = () => {
       console.log("Data to be inserted:", data);
 
       // Uncomment to actually insert the data
-       const response = await axios.post("https://rag-bl-6rgb.vercel.app/insert", data);
-       console.log("Response from insertion:", response.data);
-
+      const response = await axios.post(
+        "https://rag-bl-6rgb.vercel.app/insert",
+        data
+      );
+      console.log("Response from insertion:", response.data);
     } catch (error) {
       console.error("Error fetching products or inserting data:", error);
     }
@@ -155,7 +180,11 @@ const Result = () => {
     }
   }, [canInsertData]);
   const renderDiagnosisResult = () => {
-    if (!diagnosis || !diagnosis.predictions || diagnosis.predictions.length === 0) {
+    if (
+      !diagnosis ||
+      !diagnosis.predictions ||
+      diagnosis.predictions.length === 0
+    ) {
       return <NoDataText>No detections found.</NoDataText>;
     }
 
@@ -166,7 +195,9 @@ const Result = () => {
           Confidence: {(prediction?.confidence * 100)?.toFixed(2) || "N/A"}%
         </ConfidenceText>
         <CoordinatesText>
-          Coordinates: ({(prediction.x).toFixed(2)}, {(prediction.y).toFixed(2)}) - ({((prediction.x + prediction.width)).toFixed(2)}, {((prediction.y + prediction.height)).toFixed(2)})
+          Coordinates: ({prediction.x.toFixed(2)}, {prediction.y.toFixed(2)}) -
+          ({(prediction.x + prediction.width).toFixed(2)},{" "}
+          {(prediction.y + prediction.height).toFixed(2)})
         </CoordinatesText>
       </ResultItem>
     ));
@@ -187,30 +218,115 @@ const Result = () => {
     );
   };
 
+  const diseaseColors = {
+    acne: "rgba(255, 0, 0, 0.5)", // Red for acne
+    eczema: "rgba(0, 0, 255, 0.5)", // Blue for eczema
+    rosacea: "rgba(255, 165, 0, 0.5)", // Orange for rosacea
+    blackheads: "rgba(0, 255, 0, 0.5)", // Green for blackheads
+    wrinkles: "rgba(255, 255, 0, 0.5)", // Yellow for wrinkles
+    whiteheads: "rgba(255, 255, 255, 0.5)", // White for whiteheads
+    default: "rgba(0, 0, 0, 0.5)", // Default color
+  };
+
   const renderBoundingBoxes = () => {
-    if (!diagnosis || !diagnosis.predictions) return null;
+    if (
+      !diagnosis ||
+      !diagnosis.predictions ||
+      imageDimensions.width === 0 ||
+      imageDimensions.height === 0
+    )
+      return null;
 
-    return diagnosis.predictions.map((prediction, index) => {
-      const { x1, y1, x2, y2 } = prediction;
+    return (
+      <View style={{ position: "relative" }}>
+        <Svg
+          width={imageDimensions.width}
+          height={imageDimensions.height}
+          style={{ position: "absolute" }}
+        >
+          {diagnosis.predictions.map((prediction, index) => {
+            const { x, y, width, height, class: diseaseClass } = prediction;
+            const boxColor =
+              diseaseColors[diseaseClass.toLowerCase()] ||
+              diseaseColors.default;
 
-      const boxX = x1 * imageDimensions.width;
-      const boxY = y1 * imageDimensions.height;
-      const boxWidth = (x2 - x1) * imageDimensions.width;
-      const boxHeight = (y2 - y1) * imageDimensions.height;
+            return (
+              <Rect
+                key={index}
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+                stroke={boxColor} // Outline color
+                strokeWidth={2}
+                fill="none" // Transparent fill
+              />
+            );
+          })}
+        </Svg>
+        {diagnosis.predictions.map((prediction, index) => {
+          const { x, y, class: diseaseClass } = prediction;
 
-      return (
-        <Rect
-          key={index}
-          x={boxX}
-          y={boxY}
-          width={boxWidth}
-          height={boxHeight}
-          strokeWidth="2"
-          stroke="red"
-          fill="rgba(255, 0, 0, 0.2)"
-        />
-      );
-    });
+          return (
+            <SvgText
+              key={`label-${index}`}
+              x={x}
+              y={y - 10} // Slightly above the box
+              fontSize="12"
+              fill="black"
+              background="rgba(255, 255, 255, 0.7)"
+            >
+              {diseaseClass.charAt(0).toUpperCase() + diseaseClass.slice(1)}
+            </SvgText>
+          );
+        })}
+      </View>
+    );
+  };
+
+  // Function to render the color swatches with names
+  const renderLegend = () => {
+    const diseaseColors = {
+      acne: "rgba(255, 0, 0, 0.5)", // Red for acne
+      eczema: "rgba(0, 0, 255, 0.5)", // Blue for eczema
+      rosacea: "rgba(255, 165, 0, 0.5)", // Orange for rosacea
+      blackheads: "rgba(0, 255, 0, 0.5)", // Green for blackheads
+      wrinkles: "rgba(255, 255, 0, 0.5)", // Yellow for wrinkles
+      whiteheads: "rgba(255, 255, 255, 0.5)", // White for whiteheads
+      default: "rgba(0, 0, 0, 0.5)", // Default color
+    };
+
+    return (
+      <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
+        {Object.entries(diseaseColors).map(([condition, color]) => (
+          <View
+            key={condition}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginRight: 15,
+              marginBottom: 10,
+              paddingVertical: 2, // Adjust vertical alignment
+            }}
+          >
+            <View
+              style={{
+                width: 12, // Smaller swatch size
+                height: 12, // Smaller swatch size
+                backgroundColor: color,
+                marginRight: 8, // More space between swatch and text
+                borderRadius: 3, // Rounded corners for the color swatch
+              }}
+            />
+            {/* Ensure the text is vertically aligned with the swatch */}
+            <Text style={{ fontSize: 12, lineHeight: 15, marginBottom: 0 }}>
+              {condition.charAt(0).toUpperCase() + condition.slice(1)}{" "}
+              {/* Capitalize disease name */}
+            </Text>
+          </View>
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -225,7 +341,10 @@ const Result = () => {
             <View style={{ position: "relative", marginBottom: 20 }}>
               <Image
                 source={{ uri: imageUri }}
-                style={{ width: imageDimensions.width, height: imageDimensions.height }}
+                style={{
+                  width: imageDimensions.width,
+                  height: imageDimensions.height,
+                }}
                 resizeMode="contain"
               />
               <Svg
@@ -233,16 +352,23 @@ const Result = () => {
                 width={imageDimensions.width}
                 style={{ position: "absolute", top: 0, left: 0 }}
               >
-                {renderBoundingBoxes()}
+                {renderBoundingBoxes() ||null}
               </Svg>
             </View>
           )}
+
+          {/* Color Legend */}
+          <Title1>Skin Disease Colors</Title1>
+          <View style={{ marginBottom: 20 }}>{renderLegend()}</View>
+
           <Title1>SKIN DISEASE</Title1>
           {renderDiagnosisResult()}
           <Title1>SKIN TYPE ANALYSIS</Title1>
           {renderSkinTypeResult()}
           <ConsultButton
-            onPress={() => navigation.navigate("Product", { diagnosis, skinType })}
+            onPress={() =>
+              navigation.navigate("Product", { diagnosis, skinType })
+            }
           >
             <ConsultButtonText>Consult Products</ConsultButtonText>
           </ConsultButton>
@@ -262,13 +388,9 @@ const Result = () => {
           <BottomBarText>History</BottomBarText>
         </BottomBarItem>
         <BottomBarItem onPress={() => navigation.navigate("Chatbot")}>
-          <StyledIonicons name="person-outline" />
+          <StyledIonicons name="chatbox-ellipses-outline" />
           <BottomBarText>ChatBot</BottomBarText>
         </BottomBarItem>
-        {/* <BottomBarItem onPress={() => navigation.navigate("Profile")}>
-          <StyledIonicons name="person-outline" />
-          <BottomBarText>ACCOUNT</BottomBarText>
-        </BottomBarItem> */}
       </BottomBar>
     </SafeArea>
   );
