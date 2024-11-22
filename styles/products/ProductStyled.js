@@ -28,7 +28,7 @@ export const ProductCard = styled.View`
   border-width: 1px;
   border-color: #E9AFB9;
   padding-vertical: 35px;
-  width: ${width * 0.9}px;
+  width: ${width * 0.86}px;
   align-self: center;
 `;
 
