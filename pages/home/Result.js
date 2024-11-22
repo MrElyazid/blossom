@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Image, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import Svg, { Rect } from "react-native-svg";
+import Svg, { Rect ,Circle} from "react-native-svg";
 import { Text as SvgText } from "react-native-svg";
 import axios from "axios";
 import { Text } from "../../styles/home/HomeStyled";
@@ -222,9 +222,10 @@ const Result = () => {
     acne: "rgba(255, 0, 0, 0.5)", // Red for acne
     eczema: "rgba(0, 0, 255, 0.5)", // Blue for eczema
     rosacea: "rgba(255, 165, 0, 0.5)", // Orange for rosacea
-    blackheads: "rgba(0, 255, 0, 0.5)", // Green for blackheads
+    blackheads: "rgba(0, 128, 0, 0.5)", // Dark Green for blackheads
     wrinkles: "rgba(255, 255, 0, 0.5)", // Yellow for wrinkles
     whiteheads: "rgba(255, 255, 255, 0.5)", // White for whiteheads
+    darkcircles: "rgba(128, 0, 128, 0.5)", // Purple for dark circles
     default: "rgba(0, 0, 0, 0.5)", // Default color
   };
 
@@ -262,6 +263,14 @@ const Result = () => {
                   strokeWidth={2}
                   fill="none"
                 />
+                {/* Dark circle */}
+                <Circle
+                  cx={x + width / 2}
+                  cy={y + height / 2}
+                  r={10}
+                  fill={boxColor}
+                  opacity={0.5}
+                />
               </React.Fragment>
             );
           })}
@@ -298,19 +307,8 @@ const Result = () => {
       </View>
     );
   };
-
   // Function to render the color swatches with names
   const renderLegend = () => {
-    const diseaseColors = {
-      acne: "rgba(255, 0, 0, 0.5)", // Red for acne
-      eczema: "rgba(0, 0, 255, 0.5)", // Blue for eczema
-      rosacea: "rgba(255, 165, 0, 0.5)", // Orange for rosacea
-      blackheads: "rgba(0, 255, 0, 0.5)", // Green for blackheads
-      wrinkles: "rgba(255, 255, 0, 0.5)", // Yellow for wrinkles
-      whiteheads: "rgba(255, 255, 255, 0.5)", // White for whiteheads
-      default: "rgba(0, 0, 0, 0.5)", // Default color
-    };
-
     return (
       <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
         {Object.entries(diseaseColors).map(([condition, color]) => (
