@@ -41,7 +41,7 @@ import {
 import { FA5Style } from "@expo/vector-icons/build/FontAwesome5";
 import Toast from "react-native-toast-message";
 
-const NORMALIZED_IMAGE_SIZE = 500; // Set the desired width and height for normalized images
+const NORMALIZED_IMAGE_SIZE = 500; // Set the desired max width or height for normalized images
 
 const Home = () => {
   const [image, setImage] = useState(null);
@@ -69,10 +69,27 @@ const Home = () => {
 
   const normalizeImage = async (uri) => {
     try {
+      const { width, height } = await ImageManipulator.manipulateAsync(
+        uri,
+        [],
+        { format: 'jpeg' }
+      ).then(result => ({ width: result.width, height: result.height }));
+
+      const aspectRatio = width / height;
+      let newWidth, newHeight;
+
+      if (width > height) {
+        newWidth = Math.min(width, NORMALIZED_IMAGE_SIZE);
+        newHeight = newWidth / aspectRatio;
+      } else {
+        newHeight = Math.min(height, NORMALIZED_IMAGE_SIZE);
+        newWidth = newHeight * aspectRatio;
+      }
+
       const result = await ImageManipulator.manipulateAsync(
         uri,
         [
-          { resize: { width: NORMALIZED_IMAGE_SIZE, height: NORMALIZED_IMAGE_SIZE } },
+          { resize: { width: newWidth, height: newHeight } },
         ],
         { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
       );
@@ -113,7 +130,6 @@ const Home = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 1,
     });
     if (!result.canceled) {
@@ -125,7 +141,6 @@ const Home = () => {
   const takePhoto = async () => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 1,
     });
     if (!result.canceled) {
