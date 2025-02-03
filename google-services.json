@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "224118477905",
+    "project_number": "",
     "project_id": "blossom-77ec5",
     "storage_bucket": "blossom-77ec5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:224118477905:android:7900373c70c82e8f8fd470",
+        "mobilesdk_app_id": "",
         "android_client_info": {
           "package_name": "com.blossomAI.blossom"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAchKHp4083nE5J-4ba5oWw9ihb-AVoUmU"
+          "current_key": ""
         }
       ],
       "services": {
